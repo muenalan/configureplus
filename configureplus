@@ -1,0 +1,175 @@
+#!/bin/bash
+
+# Script: configureplus - a minimal autoconf(1)-like configure tool, which depends only on bash
+# 
+# Version: 0.1
+#
+# Author: Murat Uenalan <murat.uenalan@gmail.com
+
+CONFIGUREPLUS_PWD=$PWD
+CONFIGUREPLUS_VERSION=0.1
+CONFIGUREPLUS_DIR_OUT=.configureplus/session
+
+echo Calling configureplus "(v$CONFIGUREPLUS_VERSION)" ..
+
+# args
+
+if [[ "$1" ]]; then
+
+    CONFIGUREPLUS_SESSION=$1
+
+
+else
+
+    CONFIGUREPLUS_SESSION=local1
+
+fi
+
+
+# $CONFIGUREPLUS_SESSION
+
+mkdir -p $CONFIGUREPLUS_DIR_OUT/$CONFIGUREPLUS_SESSION
+
+# global
+
+for VARFILE in .configureplus/global/*; do
+
+    cp $VARFILE $CONFIGUREPLUS_DIR_OUT/$CONFIGUREPLUS_SESSION/
+
+done
+
+# dynamic
+
+>$CONFIGUREPLUS_DIR_OUT/$CONFIGUREPLUS_SESSION/CONFIGURE_OSTYPE            echo $OSTYPE 
+>$CONFIGUREPLUS_DIR_OUT/$CONFIGUREPLUS_SESSION/CONFIGURE_MKTEMP            echo `mktemp -d` 
+>$CONFIGUREPLUS_DIR_OUT/$CONFIGUREPLUS_SESSION/CONFIGURE_FLAG_TOOL_BTEST   which btest
+
+# std
+
+>$CONFIGUREPLUS_DIR_OUT/$CONFIGUREPLUS_SESSION/CONFIGUREPLUS_PWD           echo $CONFIGUREPLUS_PWD
+>$CONFIGUREPLUS_DIR_OUT/$CONFIGUREPLUS_SESSION/CONFIGUREPLUS_SESSION       echo $CONFIGUREPLUS_SESSION
+>$CONFIGUREPLUS_DIR_OUT/$CONFIGUREPLUS_SESSION/CONFIGUREPLUS_VERSION       echo $CONFIGUREPLUS_VERSION
+>$CONFIGUREPLUS_DIR_OUT/$CONFIGUREPLUS_SESSION/CONFIGUREPLUS_DIR_OUT       echo $CONFIGUREPLUS_DIR_OUT
+
+
+# functions
+
+function summary
+{
+    for VARFILE in $(echo $CONFIGUREPLUS_DIR_OUT/$CONFIGUREPLUS_SESSION/*|sort); do
+
+	BASENAME=$(basename $VARFILE)
+
+	DOCFILE=$CONFIGUREPLUS_DIR_OUT/doc/$BASENAME
+
+	if [ -f $DOCFILE ]; then
+
+	    printf "%-60s [%s]\n" "$VARFILE = '$(cat $VARFILE)'" "$(cat $DOCFILE)"
+
+	else
+
+	    echo $VARFILE "=" `cat $VARFILE`
+	fi
+	
+	
+    done
+}
+
+function generate_configure_mk
+{
+    echo >$CONFIGUREPLUS_DIR_OUT/$CONFIGUREPLUS_SESSION.mk
+
+    echo "# Generated with configureplus (CONFIGUREPLUS_VERSION=$CONFIGUREPLUS_VERSION, CONFIGUREPLUS_PWD=$CONFIGUREPLUS_PWD)" >>$CONFIGUREPLUS_DIR_OUT/$CONFIGUREPLUS_SESSION.mk
+    echo "# Note: space before a comment are part of a variable" >>$CONFIGUREPLUS_DIR_OUT/$CONFIGUREPLUS_SESSION.mk
+
+    echo >>$CONFIGUREPLUS_DIR_OUT/$CONFIGUREPLUS_SESSION.mk
+
+    for VARFILE in $(echo $CONFIGUREPLUS_DIR_OUT/$CONFIGUREPLUS_SESSION/*|sort); do
+
+	BASENAME=$(basename $VARFILE)
+
+	DOCFILE=$CONFIGUREPLUS_DIR_OUT/doc/$BASENAME
+
+	if [ -f $DOCFILE ]; then
+
+	    printf "%s# %s\n" "$BASENAME=\$(shell cat $VARFILE)" "$(cat $DOCFILE)" >>$CONFIGUREPLUS_DIR_OUT/$CONFIGUREPLUS_SESSION.mk
+
+	else
+
+	    echo "$BASENAME=\$(shell cat $VARFILE)" >>$CONFIGUREPLUS_DIR_OUT/$CONFIGUREPLUS_SESSION.mk
+	fi
+	
+	
+    done
+
+    echo INFO: $CONFIGUREPLUS_DIR_OUT/$CONFIGUREPLUS_SESSION.mk generated
+}
+
+function generate_configure_bash
+{
+    echo >$CONFIGUREPLUS_DIR_OUT/$CONFIGUREPLUS_SESSION.bash
+
+    echo "# Generated with configureplus (CONFIGUREPLUS_VERSION=$CONFIGUREPLUS_VERSION, CONFIGUREPLUS_PWD=$CONFIGUREPLUS_PWD)" >>$CONFIGUREPLUS_DIR_OUT/$CONFIGUREPLUS_SESSION.bash
+
+    echo >>$CONFIGUREPLUS_DIR_OUT/$CONFIGUREPLUS_SESSION.bash
+
+    for VARFILE in $(echo $CONFIGUREPLUS_DIR_OUT/$CONFIGUREPLUS_SESSION/*|sort); do
+
+	BASENAME=$(basename $VARFILE)
+
+	DOCFILE=$CONFIGUREPLUS_DIR_OUT/doc/$BASENAME
+
+	if [ -f $DOCFILE ]; then
+
+	    printf "export %-85s # %s\n" "$BASENAME='$(cat $VARFILE)'" "$(cat $DOCFILE)" >>$CONFIGUREPLUS_DIR_OUT/$CONFIGUREPLUS_SESSION.bash
+
+	else
+
+	    printf "export %s\n" "$BASENAME='$(cat $VARFILE)'" >>$CONFIGUREPLUS_DIR_OUT/$CONFIGUREPLUS_SESSION.bash
+	fi
+	
+	
+    done
+
+    echo INFO: $CONFIGUREPLUS_DIR_OUT/$CONFIGUREPLUS_SESSION.bash generated
+}
+
+function generate_configure_bash_local
+{
+    echo >$CONFIGUREPLUS_DIR_OUT/$CONFIGUREPLUS_SESSION.bash_local
+
+    echo "# Generated with configureplus (CONFIGUREPLUS_VERSION=$CONFIGUREPLUS_VERSION, CONFIGUREPLUS_PWD=$CONFIGUREPLUS_PWD)" >>$CONFIGUREPLUS_DIR_OUT/$CONFIGUREPLUS_SESSION.bash_local
+
+    echo >>$CONFIGUREPLUS_DIR_OUT/$CONFIGUREPLUS_SESSION.bash_local
+
+    for VARFILE in $(echo $CONFIGUREPLUS_DIR_OUT/$CONFIGUREPLUS_SESSION/*|sort); do
+
+	BASENAME=$(basename $VARFILE)
+
+	DOCFILE=$CONFIGUREPLUS_DIR_OUT/doc/$BASENAME
+
+	if [ -f $DOCFILE ]; then
+
+	    printf "%-85s # %s\n" "$BASENAME='$(cat $VARFILE)'" "$(cat $DOCFILE)" >>$CONFIGUREPLUS_DIR_OUT/$CONFIGUREPLUS_SESSION.bash_local
+
+	else
+
+	    printf "%s\n" "$BASENAME='$(cat $VARFILE)'" >>$CONFIGUREPLUS_DIR_OUT/$CONFIGUREPLUS_SESSION.bash_local
+	fi
+	
+	
+    done
+
+    echo INFO: $CONFIGUREPLUS_DIR_OUT/$CONFIGUREPLUS_SESSION.bash_local generated
+}
+
+# main
+
+summary
+
+generate_configure_mk
+
+generate_configure_bash
+
+generate_configure_bash_local
+
