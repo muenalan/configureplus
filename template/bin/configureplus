@@ -66,9 +66,8 @@ if [[ ! "$CONFIGUREPLUS_SESSION" ]]; then
 	
 	warn_local Try to invoke such as: CONFIGUREPLUS_SESSION=\$OSTYPE $0
 	
+	exit
     fi
-
-    exit
 
 fi
 
