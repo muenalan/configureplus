@@ -4,7 +4,7 @@ Minimal autoconfig-like configure tool
 # Description
 Architecture dependency is traditionally detected with an universal **configure** tool. This packages provide similar means, and is not intended to be compatible to the **autoconf** chain. However, it solves a similar generic problem, but beeing more granular and more friendly.
 
-# INSTALL (darwin19)
+# INSTALL userprofile (darwin19)
 
     $ ./bin/configureplus
     $ make
@@ -12,6 +12,15 @@ Architecture dependency is traditionally detected with an universal **configure*
     $ cd platform/darwin19
     $ make install
       .. installing userprofile
+
+# INSTALL systemwide (darwin19)
+
+    $ ./bin/configureplus
+    $ make
+      .. createing target platform
+    $ cd platform/darwin19
+    $ make install-systemwide
+      .. installing systemwide
 
 # SYNOPSIS
 
