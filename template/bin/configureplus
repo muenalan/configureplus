@@ -54,7 +54,19 @@ fi
 
 if [[ ! "$CONFIGUREPLUS_SESSION" ]]; then
 
-    CONFIGUREPLUS_DEBUG=1 warn_local ERROR_NOT_SET_CONFIGUREPLUS_SESSION
+    if [ -f "$CONFIGUREPLUS_DIR_OUT/global/CONFIGUREPLUS_SESSION" ]; then
+
+	CONFIGUREPLUS_SESSION=$(cat $CONFIGUREPLUS_DIR_OUT/global/CONFIGUREPLUS_SESSION)
+	
+	warn_local Loading $CONFIGUREPLUS_DIR_OUT/global/CONFIGUREPLUS_SESSION=$CONFIGUREPLUS_SESSION
+	
+    else
+	
+	CONFIGUREPLUS_DEBUG=1 warn_local ERROR_NOT_SET_CONFIGUREPLUS_SESSION
+	
+	warn_local Try to invoke such as: CONFIGUREPLUS_SESSION=\$OSTYPE $0
+	
+    fi
 
     exit
 
@@ -85,7 +97,7 @@ source $CONFIGUREPLUS_DIR_OUT/dynamic.bash
 
 # global
 
-for VARFILE in .configureplus/global/*; do
+for VARFILE in $CONFIGUREPLUS_DIR_OUT/global/*; do
 
     cp $VARFILE $CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/
 
@@ -136,7 +148,7 @@ function generate_configure_global_mk
 
     echo >>$CONFIGUREPLUS_DIR_OUT/global.mk
 
-    for VARFILE in .configureplus/global/*; do
+    for VARFILE in $CONFIGUREPLUS_DIR_OUT/global/*; do
 
 	BASENAME=$(basename $VARFILE)
 
@@ -194,7 +206,7 @@ function generate_configure_global_bash
 
     echo >>$CONFIGUREPLUS_DIR_OUT/global.bash
 
-    for VARFILE in .configureplus/global/*; do
+    for VARFILE in $CONFIGUREPLUS_DIR_OUT/global/*; do
 
 	BASENAME=$(basename $VARFILE)
 
@@ -222,7 +234,7 @@ function generate_configure_global_bash_local
 
     echo >>$CONFIGUREPLUS_DIR_OUT/global.bash_local
 
-    for VARFILE in .configureplus/global/*; do
+    for VARFILE in $CONFIGUREPLUS_DIR_OUT/global/*; do
 
 	BASENAME=$(basename $VARFILE)
 

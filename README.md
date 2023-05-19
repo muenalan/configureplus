@@ -6,7 +6,7 @@ Architecture dependency is traditionally detected with an universal **configure*
 
 # INSTALL (darwin19)
 
-    $ ./template/bin/configureplus
+    $ ./bin/configureplus
     $ make
       .. createing target platform
     $ cd platform/darwin19
