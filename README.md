@@ -134,3 +134,8 @@ Each file contains annotation for a single variable. These can be global, or dyn
 - .configureplus/**session**/darwin19.mk
 - .configureplus/**currentsession.bash**
 - .configureplus/**currentsession.mk**
+
+
+# Author
+
+Murat Uenalan <murat.uenalan@gmail.com>

@@ -2,11 +2,26 @@
 
 include .configureplus/currentsession.mk
 
-setup:
-	./configureplus/usr/local/bin/configureplus
+PRE=/usr/local
+DIR_TEMPLATE=$(CONFIGURE_PKGNAME)/$(PRE)
 
 install:
 	./bin/install-userprofile.sh
+
+uninstall:
+	./bin/uninstall-userprofile.sh
+
+install-systemwide:
+	chmod +x $(DIR_TEMPLATE)/bin/*
+	cp -r $(DIR_TEMPLATE)/bin/* $(PRE)/bin/
+	mkdir -p $(PRE)/lib/$(CONFIGURE_PKGNAME)   && cp -r $(DIR_TEMPLATE)/lib/* $(PRE)/lib/$(CONFIGURE_PKGNAME)
+	mkdir -p $(PRE)/var/$(CONFIGURE_PKGNAME)   && cp -r $(DIR_TEMPLATE)/var/* $(PRE)/var/$(CONFIGURE_PKGNAME)
+	mkdir -p $(PRE)/share/$(CONFIGURE_PKGNAME) && cp -r $(DIR_TEMPLATE)/share/* $(PRE)/share/$(CONFIGURE_PKGNAME)
+	-mkdir ~/.config/$(CONFIGURE_PKGNAME)/
+	-cp -r .configureplus ~/.config/$(CONFIGURE_PKGNAME)/
+
+uninstall-systemwide:
+	$(info ****** uninstall-systemwide: Not implemented yet *******)
 
 zip:
 	zip -r9 ../$(CONFIGURE_PKGNAME)-$(CONFIGURE_VERSION)-src.zip .
