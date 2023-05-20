@@ -4,6 +4,13 @@ Minimal autoconfig-like configure tool
 # Description
 Architecture dependency is traditionally detected with an universal **configure** tool. This packages provide similar means, and is not intended to be compatible to the **autoconf** chain. However, it solves a similar generic problem, but beeing more granular and more friendly.
 
+# Aims
+
+- Be universal, with absolute minimal prerequisites: bash.
+- Keep it simple. Files are variables, that are used at each step.
+- A recorded configuration should be transportable (such as stored in ~/.config for reuse).
+- Multiple configurations (sessions) should be able to co-exists. Allowing the switch to a particular **session-key**; testing different versions.
+
 # INSTALL userprofile (darwin19)
 
     $ ./bin/configureplus
@@ -57,13 +64,6 @@ Architecture dependency is traditionally detected with an universal **configure*
       >$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/CONFIGURE_FLAG_TOOL_BTEST   which btest
       >$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/CONFIGURE_TIMESTAMP         date
   
-# Aims
-
-1. Be universal, with absolute minimal prerequisites: bash.
-2. Keep it simple. Files are variables, that are used at each step.
-3. A recorded configuration should be transportable (such as stored in ~/.config for reuse).
-4. Multiple configurations (sessions) should be able to co-exists. Allowing the switch to a particular **session-key**; testing different versions.
-
 # INPUT .configureplus
 Files are used to configure the configuration variables.
 

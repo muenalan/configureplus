@@ -64,8 +64,11 @@ if [[ ! "$CONFIGUREPLUS_SESSION" ]]; then
 	
 	CONFIGUREPLUS_DEBUG=1 warn_local ERROR_NOT_SET_CONFIGUREPLUS_SESSION
 	
-	warn_local Try to invoke such as: CONFIGUREPLUS_SESSION=\$OSTYPE $0
-	
+	warn_local Will invoke: echo $OSTYPE >.configureplus/global/CONFIGUREPLUS_SESSION
+	warn_local Retry configureplus again.
+
+	echo $OSTYPE >.configureplus/global/CONFIGUREPLUS_SESSION
+
 	exit
     fi
 

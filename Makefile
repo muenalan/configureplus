@@ -37,6 +37,7 @@ clean:
 	-find $(CONFIGURE_DIR_OUTPUT)/$(CONFIGURE_OSTYPE)/$(CONFIGURE_PKGNAME)/usr/local/var/* |zip -rm $(CONFIGURE_MKTEMP)/$(CONFIGURE_PKGNAME)-$(CONFIGURE_OSTYPE)-bak.zip -@
 	-find $(CONFIGURE_DIR_OUTPUT)/$(CONFIGURE_OSTYPE)/$(CONFIGURE_PKGNAME)/usr/local/share/* |zip -rm $(CONFIGURE_MKTEMP)/$(CONFIGURE_PKGNAME)-$(CONFIGURE_OSTYPE)-bak.zip -@
 	-rm -r .configureplus/session/$(CONFIGUREPLUS_SESSION)*
+	-rm .configureplus/global/CONFIGUREPLUS_SESSION
 
 
 
