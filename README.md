@@ -11,27 +11,59 @@ Architecture dependency is traditionally detected with an universal **configure*
 - A recorded configuration should be transportable (such as stored in ~/.config for reuse).
 - Multiple configurations (sessions) should be able to co-exists. Allowing the switch to a particular **session-key**; testing different versions.
 
-# INSTALL userprofile (darwin19)
+# Supported platforms
+This is a multiarch package, where during the build process the platform is detected and a architecture dependant version is manufactured into the platforms directory.
+
+## darwin19 (macos)
+There are two alternative installation options. Per default, the program is unpacked into this directory, and the userprofile is modified to include the corresponding bin/ into the PATH system variable.
+
+### INSTALL userprofile (darwin19)
 
     $ ./bin/configureplus
     $ make
-      .. createing target platform
+      .. building target platform
     $ cd platform/darwin19
     $ make install
       .. installing userprofile
 
-# INSTALL systemwide (darwin19)
+### INSTALL systemwide (darwin19)
 
     $ ./bin/configureplus
     $ make
-      .. createing target platform
+      .. building target platform
     $ cd platform/darwin19
+    $ make install-systemwide
+      .. installing systemwide
+
+## linux-gnu
+There are two alternative installation options. Per default, the program is unpacked into this directory, and the userprofile is modified to include the corresponding bin/ into the PATH system variable.
+
+### INSTALL userprofile (linux-gnu)
+
+    $ ./bin/configureplus
+    $ make
+      .. building target platform
+    $ cd platform/linux-gnu
+    $ make install
+      .. installing userprofile
+
+### INSTALL systemwide (linux-gnu)
+
+    $ ./bin/configureplus
+    $ make
+      .. building target platform
+    $ cd platform/linux-gnu
     $ make install-systemwide
       .. installing systemwide
 
 # SYNOPSIS
 
     $ configureplus
+    Detecting ...
+- .configureplus/session/darwin19/CONFIGUREPLUS_SESSION = darwin19
+
+    $ configureplus
+    Configuring (darwin19) ...
 - .configureplus/session/darwin19/CONFIGUREPLUS_DIR_CONFIG = /Users/muenalan/.config/configureplus
 - .configureplus/session/darwin19/CONFIGUREPLUS_DIR_OUT = .configureplus
 - .configureplus/session/darwin19/CONFIGUREPLUS_DIR_OUT_SESSIONS = .configureplus/session
