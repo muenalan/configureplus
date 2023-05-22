@@ -19,18 +19,20 @@ There are two alternative installation options. Per default, the program is unpa
 
 ### INSTALL userprofile (darwin19)
 
-    $ ./bin/configureplus
     $ make
       .. building target platform
+    $ cd build
+    $ make
     $ cd platform/darwin19
     $ make install
       .. installing userprofile
 
 ### INSTALL systemwide (darwin19)
 
-    $ ./bin/configureplus
     $ make
       .. building target platform
+    $ cd build
+    $ make
     $ cd platform/darwin19
     $ make install-systemwide
       .. installing systemwide
@@ -40,18 +42,20 @@ There are two alternative installation options. Per default, the program is unpa
 
 ### INSTALL userprofile (linux-gnu)
 
-    $ ./bin/configureplus
     $ make
       .. building target platform
+    $ cd build
+    $ make
     $ cd platform/linux-gnu
     $ make install
       .. installing userprofile
 
 ### INSTALL systemwide (linux-gnu)
 
-    $ ./bin/configureplus
     $ make
       .. building target platform
+    $ cd build
+    $ make
     $ cd platform/linux-gnu
     $ make install-systemwide
       .. installing systemwide

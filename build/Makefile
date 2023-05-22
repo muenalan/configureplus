@@ -10,6 +10,7 @@ install:
 	-mkdir -p $(CONFIGURE_DIR_OUTPUT)/$(CONFIGURE_OSTYPE)/$(CONFIGURE_PKGNAME)/usr/local/share && cp -r $(CONFIGURE_DIR_TEMPLATE)/share/* $(CONFIGURE_DIR_OUTPUT)/$(CONFIGURE_OSTYPE)/$(CONFIGURE_PKGNAME)/usr/local/share/
 	-mkdir ~/.config/$(CONFIGURE_PKGNAME)/
 	-cp -r .configureplus ~/.config/$(CONFIGURE_PKGNAME)/
+	cd $(CONFIGURE_DIR_OUTPUT)/$(CONFIGURE_OSTYPE) && ./bin/configureplus
 	$(info ******** Overwrite template folder to architecture-specific revision: $(CONFIGURE_DIR_OUTPUT)/$(CONFIGURE_OSTYPE).. ***********)
 	$(info ******** Continue with .. $ cd $(CONFIGURE_DIR_OUTPUT)/$(CONFIGURE_OSTYPE) ***********)
 
