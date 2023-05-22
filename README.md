@@ -56,11 +56,39 @@ There are two alternative installation options. Per default, the program is unpa
     $ make install-systemwide
       .. installing systemwide
 
-# SYNOPSIS
+# SYNOPSIS (darwin19)
+
+    # Warn, because .configureplus/session/darwin19/CONFIGUREPLUS_SESSION is not set
+    
+    $ configureplus
+    [WARN stdout, configureplus] : { ERROR_NOT_SET_CONFIGUREPLUS_SESSION }
+    [WARN stdout, configureplus] : { Will invoke: echo darwin19 }
+    [WARN stdout, configureplus] : { Retry configureplus again. }    
 
     $ configureplus
-    Detecting ...
-- .configureplus/session/darwin19/CONFIGUREPLUS_SESSION = darwin19
+    [WARN stdout, configureplus] : { Loading .configureplus/global/CONFIGUREPLUS_SESSION=darwin19 }
+- .configureplus/session/darwin19/CONFIGUREPLUS_DIR_CONFIG = /Users/muenalan/.config/configureplus
+- .configureplus/session/darwin19/CONFIGUREPLUS_DIR_OUT = .configureplus
+- .configureplus/session/darwin19/CONFIGUREPLUS_DIR_OUT_SESSIONS = .configureplus/session
+- .configureplus/session/darwin19/CONFIGUREPLUS_PWD = /Users/muenalan/git-workdirs/github.com/muenalan/bash/configureplus
+- .configureplus/session/darwin19/CONFIGUREPLUS_SESSION = 'darwin19' [session-id (such as $OSTYPE)]
+- .configureplus/session/darwin19/CONFIGUREPLUS_VERSION = 0.1
+- .configureplus/session/darwin19/CONFIGURE_BASH_PROFILE_FILE = /Users/muenalan/.bash_profile
+- .configureplus/session/darwin19/CONFIGURE_DIR_OUTPUT = 'platforms' [folder for general and os-specific files (merged with CONFIG_DIR_TEMPLATE)]
+- .configureplus/session/darwin19/CONFIGURE_DIR_TEMPLATE = 'template' [folder for os-specific files and template files merged]
+- .configureplus/session/darwin19/CONFIGURE_FLAG_TOOL_BTEST = '' [btest *testing* tool path]
+- .configureplus/session/darwin19/CONFIGURE_GIT_TAG = v0.0.1
+- .configureplus/session/darwin19/CONFIGURE_MKTEMP = '/var/folders/px/ctnmlq5n5gbf154mj25wzdxh0000gn/T/tmp.FU7FWYDy' [make session temp dir]
+- .configureplus/session/darwin19/CONFIGURE_OSTYPE = 'darwin19' [current os identifier]
+- .configureplus/session/darwin19/CONFIGURE_PKGNAME = 'configureplus' [distribution package name]
+- .configureplus/session/darwin19/CONFIGURE_TIMESTAMP = Mon May 22 11:41:16 CEST 2023
+- .configureplus/session/darwin19/CONFIGURE_VERSION = '0.0.1'  [distribution version]
+    INFO: .configureplus/global.mk generated
+    INFO: .configureplus/global.bash generated
+    INFO: .configureplus/global.bash_local generated
+    INFO: .configureplus/session/darwin19.mk generated
+    INFO: .configureplus/session/darwin19.bash generated
+    INFO: .configureplus/session/darwin19.bash_local generated
 
     $ configureplus
     Configuring (darwin19) ...
