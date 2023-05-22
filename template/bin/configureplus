@@ -52,6 +52,14 @@ if [[ ! "$CONFIGUREPLUS_DEBUG" ]]; then
 
 fi
 
+if [[ "$1" == '--detect-os' ]]; then
+
+    echo $OSTYPE >.configureplus/global/CONFIGUREPLUS_SESSION
+
+    warn_local "--detect-os: \$OSTYPE >.configureplus/global/CONFIGUREPLUS_SESSION"
+
+fi
+      
 if [[ ! "$CONFIGUREPLUS_SESSION" ]]; then
 
     if [ -f "$CONFIGUREPLUS_DIR_OUT/global/CONFIGUREPLUS_SESSION" ]; then
