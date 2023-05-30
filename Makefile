@@ -1,5 +1,6 @@
-platform-current:
+install:
 	cd build/ && ./bin/configureplus --detect-os
+	cd build/ && make
 
 init: 
 	mkdir -p template/bin

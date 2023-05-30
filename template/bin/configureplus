@@ -236,6 +236,8 @@ function generate_configure_global_bash
     echo INFO: $CONFIGUREPLUS_DIR_OUT/global.bash generated
 }
 
+
+
 function generate_configure_global_bash_local
 {
     echo >$CONFIGUREPLUS_DIR_OUT/global.bash_local
@@ -263,6 +265,52 @@ function generate_configure_global_bash_local
 
     echo INFO: $CONFIGUREPLUS_DIR_OUT/global.bash_local generated
 }
+
+function generate_configure_global_json
+{
+    echo >$CONFIGUREPLUS_DIR_OUT/global.json
+
+    # JSON does not support comments
+    #    echo "# Generated with configureplus (CONFIGUREPLUS_VERSION=$CONFIGUREPLUS_VERSION, CONFIGUREPLUS_PWD=$CONFIGUREPLUS_PWD)" >>$CONFIGUREPLUS_DIR_OUT/global.json
+
+    echo "[" >>$CONFIGUREPLUS_DIR_OUT/global.json
+
+    echo >>$CONFIGUREPLUS_DIR_OUT/global.json
+
+
+    local ARRAY=($CONFIGUREPLUS_DIR_OUT/global/*)
+
+    local ARRAY_LEN=${#ARRAY[@]}
+
+    local CNT=1
+
+    for VARFILE in ${ARRAY[@]}; do
+
+	local BASENAME=$(basename $VARFILE)
+
+        COMMA=
+
+        if [[ $CNT < $ARRAY_LEN ]]; then
+
+            COMMA=,
+            
+        fi
+
+	printf -v VAR '   "%s" : "%s"%s'  $BASENAME "$(cat $VARFILE)" $COMMA
+
+        echo "$VAR"  >>$CONFIGUREPLUS_DIR_OUT/global.json
+
+	let CNT=$CNT+1
+        
+    done
+
+    echo >>$CONFIGUREPLUS_DIR_OUT/global.json
+
+    echo "]" >>$CONFIGUREPLUS_DIR_OUT/global.json
+
+    echo INFO: $CONFIGUREPLUS_DIR_OUT/global.json generated
+}
+
 
 
 
@@ -327,6 +375,49 @@ function generate_configure_session_bash_local
     echo INFO: $CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION.bash_local generated
 }
 
+function generate_configure_session_json
+{
+    echo >$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION.json
+
+    echo "[" >>$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION.json
+
+    echo >>$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION.json
+
+    local ARRAY=($(echo $CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/*|sort))
+
+    local ARRAY_LEN=${#ARRAY[@]}
+
+    local CNT=1
+
+    for VARFILE in ${ARRAY[@]}; do
+
+	BASENAME=$(basename $VARFILE)
+
+        COMMA=
+
+#        echo CNT=$CNT ARRAY_LEN=$ARRAY_LEN
+        
+        if [[ $CNT -lt $ARRAY_LEN ]]; then
+
+            COMMA=,
+            
+        fi
+
+	printf -v VAR '   "%s" : "%s"%s'  $BASENAME "$(cat $VARFILE)" $COMMA
+
+        echo "$VAR"  >>$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION.json
+
+	let CNT=$CNT+1
+
+    done
+
+    echo >>$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION.json
+
+    echo "]" >>$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION.json
+
+    echo INFO: $CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION.json generated
+}
+
 # main
 
 summary
@@ -337,6 +428,7 @@ generate_configure_global_bash
 
 generate_configure_global_bash_local
 
+generate_configure_global_json
 
 generate_configure_session_mk
 
@@ -344,3 +436,49 @@ generate_configure_session_bash
 
 generate_configure_session_bash_local
 
+generate_configure_session_json
+
+
+function join_array_comma
+{
+    local SEP=$1
+
+    shift
+    
+    local ARRAY=$@
+    
+    ARRAY_LEN=${#ARRAY[@]}
+
+#    echo ARRAY="${ARRAY[@]} .."
+    
+#    echo ARRAY_LEN=$ARRAY_LEN
+
+    CNT=1
+
+    RESULT=()
+
+    for ENTRY in ${ARRAY[@]}; do
+
+        COMMA=
+
+        if [[ $CNT -lt $ARRAY_LEN ]]; then
+
+            COMMA=,
+            
+        fi
+
+	printf -v VAR '%s%s' $ENTRY $COMMA
+
+        echo "VAR=$VAR"
+        
+        RESULT=("${RESULT[@]}" $VAR)
+                
+	let CNT=$CNT+1
+
+    done
+
+    echo ${RESULT[@]}
+}
+
+#test
+#join_array_comma ",\n" "ALPHA : 1" "BETA : 2" "GAMMA : 3"
