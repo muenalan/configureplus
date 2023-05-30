@@ -5,12 +5,6 @@ include .configureplus/currentsession.mk
 PRE=/usr/local
 DIR_TEMPLATE=$(CONFIGURE_PKGNAME)/$(PRE)
 
-install:
-	./bin/install-userprofile.sh
-
-uninstall:
-	./bin/uninstall-userprofile.sh
-
 install-systemwide:
 	chmod +x $(DIR_TEMPLATE)/bin/*
 	cp -r $(DIR_TEMPLATE)/bin/* $(PRE)/bin/
@@ -22,6 +16,12 @@ install-systemwide:
 
 uninstall-systemwide:
 	$(info ****** uninstall-systemwide: Not implemented yet *******)
+
+install:
+	./bin/install-userprofile.sh
+
+uninstall:
+	./bin/uninstall-userprofile.sh
 
 zip:
 	zip -r9 packages/$(CONFIGURE_PKGNAME)-$(CONFIGURE_VERSION)-$(CONFIGURE_OSTYPE).zip .
