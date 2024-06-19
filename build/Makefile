@@ -12,7 +12,7 @@ install:
 	-cp -r .configureplus ~/.config/$(CONFIGURE_PKGNAME)/
 	cd $(CONFIGURE_DIR_OUTPUT)/$(CONFIGURE_OSTYPE) && ./bin/configureplus
 	$(info ******** Overwrite template folder to architecture-specific revision: $(CONFIGURE_DIR_OUTPUT)/$(CONFIGURE_OSTYPE).. ***********)
-	$(info ******** Continue with .. $ cd $(CONFIGURE_DIR_OUTPUT)/$(CONFIGURE_OSTYPE) ***********)
+	$(info ******** Continue with .. $ cd build/$(CONFIGURE_DIR_OUTPUT)/$(CONFIGURE_OSTYPE) ***********)
 
 init: 
 	mkdir -p template/bin

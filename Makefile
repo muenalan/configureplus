@@ -1,4 +1,5 @@
 install:
+	$(info ******** After install, you will have a build/$$CONFIGURE_OSTYPE folder. Proceed in this platform-specific build directory ***********)
 	cd build/ && ./bin/configureplus --detect-os
 	cd build/ && make
 

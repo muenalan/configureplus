@@ -2,7 +2,7 @@
 
 # Script: configureplus - a minimal autoconf(1)-like configure tool, which depends only on bash
 # 
-# Version: 0.1
+# Version: 0.11
 #
 # Author: Murat Uenalan <murat.uenalan@gmail.com
 
@@ -54,9 +54,9 @@ fi
 
 if [[ "$1" == '--detect-os' ]]; then
 
-    echo $OSTYPE >.configureplus/global/CONFIGUREPLUS_SESSION
+    echo $OSTYPE >$CONFIGUREPLUS_DIR_OUT/global/CONFIGUREPLUS_SESSION
 
-    warn_local "--detect-os: \$OSTYPE >.configureplus/global/CONFIGUREPLUS_SESSION"
+    warn_local "--detect-os: \$OSTYPE >$CONFIGUREPLUS_DIR_OUT/global/CONFIGUREPLUS_SESSION"
 
 fi
       
@@ -72,10 +72,15 @@ if [[ ! "$CONFIGUREPLUS_SESSION" ]]; then
 	
 	CONFIGUREPLUS_DEBUG=1 warn_local ERROR_NOT_SET_CONFIGUREPLUS_SESSION
 	
-	warn_local Will invoke: echo $OSTYPE >.configureplus/global/CONFIGUREPLUS_SESSION
-	warn_local Retry configureplus again.
+	warn_local Will invoke: mkdir -p $CONFIGUREPLUS_DIR_OUT/global
 
-	echo $OSTYPE >.configureplus/global/CONFIGUREPLUS_SESSION
+        mkdir -p $CONFIGUREPLUS_DIR_OUT/global
+
+	warn_local Will invoke: echo $OSTYPE >$CONFIGUREPLUS_DIR_OUT/global/CONFIGUREPLUS_SESSION
+
+	echo $OSTYPE >$CONFIGUREPLUS_DIR_OUT/global/CONFIGUREPLUS_SESSION
+
+	warn_local Retry configureplus again.
 
 	exit
     fi
@@ -92,7 +97,22 @@ mkdir -p $CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION
 
 if [ ! -f $CONFIGUREPLUS_DIR_OUT/dynamic.bash ]; then
 
-    touch $CONFIGUREPLUS_DIR_OUT/dynamic.bash
+    warn_local Probing $CONFIGUREPLUS_DIR_CONFIG/$CONFIGUREPLUS_DIR_OUT/dynamic.bash
+    
+    if [ -f $CONFIGUREPLUS_DIR_CONFIG/$CONFIGUREPLUS_DIR_OUT/dynamic.bash ]; then
+
+        warn_local cp $CONFIGUREPLUS_DIR_CONFIG/$CONFIGUREPLUS_DIR_OUT/dynamic.bash $CONFIGUREPLUS_DIR_OUT/
+
+        cp $CONFIGUREPLUS_DIR_CONFIG/$CONFIGUREPLUS_DIR_OUT/dynamic.bash $CONFIGUREPLUS_DIR_OUT/
+
+    else
+
+        warn_local touch $CONFIGUREPLUS_DIR_OUT/dynamic.bash
+
+        touch $CONFIGUREPLUS_DIR_OUT/dynamic.bash
+
+    fi
+    
 
 fi
 
@@ -102,6 +122,8 @@ if [ ! -d $CONFIGUREPLUS_DIR_OUT/global ]; then
     mkdir -p $CONFIGUREPLUS_DIR_OUT/global 
 
 fi
+
+warn_local source $CONFIGUREPLUS_DIR_OUT/dynamic.bash
 
 source $CONFIGUREPLUS_DIR_OUT/dynamic.bash
 
