@@ -1,22 +1,24 @@
 #!/bin/bash
 
 # Script: configureplus - a minimal autoconf(1)-like configure tool, which depends only on bash
-# 
-# Version: 0.11
 #
 # Author: Murat Uenalan <murat.uenalan@gmail.com
 
 # source `which configureplus.bash`
 
 CONFIGUREPLUS_PWD=$PWD
-CONFIGUREPLUS_VERSION=0.1
+CONFIGUREPLUS_VERSION=0.11
 CONFIGUREPLUS_DIR_OUT=.configureplus
 CONFIGUREPLUS_DIR_OUT_SESSIONS=$CONFIGUREPLUS_DIR_OUT/session
 CONFIGUREPLUS_ZERO_ARG_BASENAME=$(basename $0)
 CONFIGUREPLUS_DIR_CONFIG=~/.config/configureplus
 
-
 # functions
+
+function echo_local
+{
+        >&2 echo "[INFO stdout, $CONFIGUREPLUS_ZERO_ARG_BASENAME] : {" $@ "}" 
+}
 
 function warn_local
 {
@@ -27,11 +29,115 @@ function warn_local
     fi
 }
 
-function configureplus_envshow
+function configureplus_env
 {
-    env|grep CONFIGUREPLUS_|sort
+    warn_local Sourcing ~/.config/configureplus/.configureplus/global.bash_local
+    
+    source ~/.config/configureplus/.configureplus/global.bash_local
+
+    set|perl -ne 'print if /^CONFIGURE(PLUS)?_/;'
+
+    warn_local "Note: Your local shell variables are not shown. Rerun: '$ set|grep CONFIGURE' if needed." 
 }
 
+function configureplus_status
+{
+    warn_local Showing ~/.config/configureplus/.configureplus/
+
+    tree ~/.config/configureplus/.configureplus/
+
+    if [ -d ".configureplus/" ]; then
+
+        tree .configureplus/
+
+    fi
+}
+
+function configureplus_set
+{
+    warn_local Setting $CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/CONFIGUREPLUS_$1
+
+    >$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/CONFIGUREPLUS_$1 echo $2
+}
+
+function configureplus_get
+{
+    warn_local Getting $CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/CONFIGUREPLUS_$1
+
+    if [ -f $CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/CONFIGUREPLUS_$1 ]; then
+        
+        cat $CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/CONFIGUREPLUS_$1
+
+    else
+
+        warn_local "Could not find local variable, will look for global"
+        
+        cat $CONFIGUREPLUS_DIR_CONFIG/$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/CONFIGUREPLUS_$1
+
+    fi
+    
+}
+
+if [[ "$1" == 'env' ]]; then
+
+    configureplus_env
+
+    exit
+fi
+
+if [[ "$1" == 'status' ]]; then
+
+    configureplus_status
+
+    exit
+fi
+
+if [[ "$1" == 'help' ]]; then
+
+    cat <<UNTIL_HERE
+
+configureplus - a minimal autoconf(1)-like configure tool, which depends only on bash
+
+  Usage: 
+
+      configureplus <commands> [ARGS]
+
+  Commands:
+
+      help
+
+      env
+
+      set <varname> <value>
+
+      get <varname>
+
+      status
+
+  Examples:
+
+      $ configureplus set ALPHA 123
+
+      $ configureplus get ALPHA
+      123
+
+      $ CONFIGUREPLUS_SESSION=local1 template/bin/configureplus get SESSION
+      [WARN stdout, configureplus] : { Could not find local variable, will look for global }
+      local1
+
+  Environment:
+
+      CONFIGUREPLUS_PWD=$CONFIGUREPLUS_PWD
+      CONFIGUREPLUS_VERSION=$CONFIGUREPLUS_VERSION
+      CONFIGUREPLUS_DIR_OUT=$CONFIGUREPLUS_DIR_OUT
+      CONFIGUREPLUS_DIR_OUT_SESSIONS=$CONFIGUREPLUS_DIR_OUT_SESSIONS
+      CONFIGUREPLUS_ZERO_ARG_BASENAME=$CONFIGUREPLUS_ZERO_ARG_BASENAME
+      CONFIGUREPLUS_DIR_CONFIG=$CONFIGUREPLUS_DIR_CONFIG
+
+UNTIL_HERE
+
+    exit
+fi
 
 # defaults
 
@@ -51,6 +157,7 @@ if [[ ! "$CONFIGUREPLUS_DEBUG" ]]; then
     CONFIGUREPLUS_DEBUG=$0
 
 fi
+
 
 if [[ "$1" == '--detect-os' ]]; then
 
@@ -86,6 +193,26 @@ if [[ ! "$CONFIGUREPLUS_SESSION" ]]; then
     fi
 
 fi
+
+
+
+
+
+
+if [[ "$1" == 'set' ]]; then
+
+    configureplus_set $2 $3
+
+    exit
+fi
+
+if [[ "$1" == 'get' ]]; then
+
+    configureplus_get $2
+
+    exit
+fi
+
 
 
 
@@ -504,3 +631,4 @@ function join_array_comma
 
 #test
 #join_array_comma ",\n" "ALPHA : 1" "BETA : 2" "GAMMA : 3"
+
