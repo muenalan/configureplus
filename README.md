@@ -1,5 +1,7 @@
 # configureplus
-Minimal autoconfig-like configure tool
+
+Minimal autoconfig-like configure tool. Can be used to locally create a (.configureplus) folder, which holds variables about the platform. Custom variables can be added. 
+Moreover, a global fallback for variables is available (~/.config/configureplus/.configureplus)
 
 # Synopsis
 
@@ -7,8 +9,11 @@ Minimal autoconfig-like configure tool
  $ pushd build/platforms/darwin19
  $ make install-systemwide
  $ configureplus help
+ $ cd somewhere
+ $ configureplus # create a local .configureplus/ folder with default platform variables
  
 # Description
+
 Architecture dependency is traditionally detected with an universal **configure** tool. This packages provide similar means, and is not intended to be compatible to the **autoconf** chain. However, it solves a similar generic problem, but beeing more granular and more friendly.
 
 # Aims
