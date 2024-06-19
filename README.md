@@ -3,6 +3,9 @@ Minimal autoconfig-like configure tool
 
 # Synopsis
 
+ $ make install
+ $ pushd build/platforms/darwin19
+ $ make install-systemwide
  $ configureplus help
  
 # Description
