@@ -10,7 +10,10 @@ Moreover, a global fallback for variables is available (~/.config/configureplus/
  $ make install-systemwide
  $ configureplus help
  $ cd somewhere
- $ configureplus # create a local .configureplus/ folder with default platform variables
+ $ configureplus                               # create a local .configureplus/ folder with default platform variables (use $OSTYPE)
+ $ CONFIGUREPLUS_SESSION=local1 configureplus set ALPHA 123 # .. create a scratch session for later use
+ $ CONFIGUREPLUS_SESSION=local1 configureplus get ALPHA # .. create a scratch session for later use
+ 123
  
 # Description
 
