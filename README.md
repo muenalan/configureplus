@@ -1,6 +1,10 @@
 # configureplus
 Minimal autoconfig-like configure tool
 
+# Synopsis
+
+ $ configureplus help
+ 
 # Description
 Architecture dependency is traditionally detected with an universal **configure** tool. This packages provide similar means, and is not intended to be compatible to the **autoconf** chain. However, it solves a similar generic problem, but beeing more granular and more friendly.
 
