@@ -151,9 +151,16 @@ configureplus - a minimal autoconf(1)-like configure tool, which depends only on
       $ configureplus get ALPHA
       123
 
-      $ CONFIGUREPLUS_SESSION=local1 template/bin/configureplus get SESSION
+      # Create a local session
+
+      $ CONFIGUREPLUS_SESSION=local1 configureplus get SESSION
       [WARN stdout, configureplus] : { Could not find local variable, will look for global }
       local1
+
+      # Update the global session
+
+      $ cd ~/.config/configureplus
+      $ configureplus 
 
   Environment:
 
