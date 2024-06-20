@@ -55,27 +55,47 @@ function configureplus_status
 
 function configureplus_set
 {
-    warn_local Setting $CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/CONFIGUREPLUS_$1
+    FNAME=$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/$1
+    
+    if [ "$3" == "global" ]; then
 
-    >$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/CONFIGUREPLUS_$1 echo $2
+        FNAME=~/.config/configureplus/$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/$1
+
+    fi
+    
+    warn_local Setting $FNAME
+
+    >$FNAME echo $2
 }
 
 function configureplus_get
 {
-    warn_local Getting $CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/CONFIGUREPLUS_$1
+    warn_local Getting $CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/$1
 
-    if [ -f $CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/CONFIGUREPLUS_$1 ]; then
+    if [ -f $CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/$1 ] && [ "$2" != "global" ]; then
         
-        cat $CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/CONFIGUREPLUS_$1
-
+        FNAME=$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/$1
+    
     else
 
-        warn_local "Could not find local variable, will look for global"
-        
-        cat $CONFIGUREPLUS_DIR_CONFIG/$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/CONFIGUREPLUS_$1
+        FNAME=$CONFIGUREPLUS_DIR_CONFIG/$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/$1
 
+        if [ ! -f $FNAME ]; then
+
+            warn_local the global path $FNAME was not available. Now try to global/
+
+            FNAME=$CONFIGUREPLUS_DIR_CONFIG/$CONFIGUREPLUS_DIR_OUT/global/$1
+
+            warn_local Now looking for FNAME=$FNAME
+
+        fi
     fi
-    
+
+    echo_local cat $FNAME
+
+    cat $FNAME
+
+    echo ""
 }
 
 function configureplus_sessions_list
@@ -112,9 +132,9 @@ configureplus - a minimal autoconf(1)-like configure tool, which depends only on
 
       env                    - show env variables
 
-      set <varname> <value>  - set variable (for the session CONFIGUREPLUS_SESSION)
+      set <varname> <value> [global] - set variable (for the session CONFIGUREPLUS_SESSION); respectively local or global (if session present)
 
-      get <varname>          - get variable (for the session CONFIGUREPLUS_SESSION)
+      get <varname>         [global] - get variable (for the session CONFIGUREPLUS_SESSION); respectively local or global (if session present)
 
       status                 - show local/global configuration tree
 
@@ -173,7 +193,7 @@ if [[ "$1" == '--detect-os' ]]; then
 
 fi
       
-if [[ ! "$CONFIGUREPLUS_SESSION" ]]; then
+if [[ -z "$CONFIGUREPLUS_SESSION" ]]; then
 
     warn_local CONFIGUREPLUS_SESSION not set. Looking for "$CONFIGUREPLUS_DIR_OUT/global/CONFIGUREPLUS_SESSION"
 
@@ -236,14 +256,14 @@ fi
 
 if [[ "$1" == 'set' ]]; then
 
-    configureplus_set $2 $3
+    configureplus_set $2 $3 $4
 
     exit
 fi
 
 if [[ "$1" == 'get' ]]; then
 
-    configureplus_get $2
+    configureplus_get $2 $3
 
     exit
 fi

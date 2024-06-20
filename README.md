@@ -162,7 +162,7 @@ Files are used to configure the configuration variables.
 - .confgureplus/**currentsession**.bash                  : include'able session single-file (bash, export)
 - .confgureplus/**currentsession**.bash_local            : include'able session single-file (bash)
 
-## .configureplus/doc/**varname**
+## .configureplus/**doc**/varname
 Each file contains annotation for a single variable. These can be global, or dynamically declared.
 
 - .configureplus/**doc**/CONFIGUREPLUS_SESSIONS
@@ -182,11 +182,11 @@ Each file contains annotation for a single variable. These can be global, or dyn
 - .configureplus/Makefile
 - .configureplus/**dynamic.bash**
 - .configureplus/**global**
-- .configureplus/**global**/CONFIGUREPLUS_SESSION
-- .configureplus/**global**/CONFIGURE_DIR_OUTPUT
-- .configureplus/**global**/CONFIGURE_PKGNAME
-- .configureplus/**global**/CONFIGURE_DIR_TEMPLATE
-- .configureplus/**global**/CONFIGURE_VERSION
+- .configureplus/**global**/CONFIGUREPLUS_SESSION                         # variable
+- .configureplus/**global**/CONFIGURE_DIR_OUTPUT                          # variable
+- .configureplus/**global**/CONFIGURE_PKGNAME                             # variable
+- .configureplus/**global**/CONFIGURE_DIR_TEMPLATE                        # variable
+- .configureplus/**global**/CONFIGURE_VERSION                             # variable
 - .configureplus/**global.bash_local**
 - .configureplus/**global.bash**
 - .configureplus/**global.mk**
@@ -202,21 +202,21 @@ Each file contains annotation for a single variable. These can be global, or dyn
 - .configureplus/**doc**/CONFIGURE_VERSION
 - .configureplus/**session**
 - .configureplus/**session**/darwin19
-- .configureplus/**session**/darwin19/CONFIGUREPLUS_DIR_OUT
-- .configureplus/**session**/darwin19/CONFIGUREPLUS_SESSION
-- .configureplus/**session**/darwin19/CONFIGUREPLUS_PWD
-- .configureplus/**session**/darwin19/CONFIGUREPLUS_DIR_CONFIG
-- .configureplus/**session**/darwin19/CONFIGURE_MKTEMP
-- .configureplus/**session**/darwin19/CONFIGUREPLUS_VERSION
-- .configureplus/**session**/darwin19/CONFIGURE_TIMESTAMP
-- .configureplus/**session**/darwin19/CONFIGURE_DIR_OUTPUT
-- .configureplus/**session**/darwin19/CONFIGURE_FLAG_TOOL_BTEST
-- .configureplus/**session**/darwin19/CONFIGURE_OSTYPE
-- .configureplus/**session**/darwin19/CONFIGURE_PKGNAME
-- .configureplus/**session**/darwin19/CONFIGURE_DIR_TEMPLATE
-- .configureplus/**session**/darwin19/CONFIGURE_BASH_PROFILE_FILE
-- .configureplus/**session**/darwin19/CONFIGURE_VERSION
-- .configureplus/**session**/darwin19/CONFIGUREPLUS_DIR_OUT_SESSIONS
+- .configureplus/**session**/darwin19/CONFIGUREPLUS_DIR_OUT               # variable
+- .configureplus/**session**/darwin19/CONFIGUREPLUS_SESSION               # variable
+- .configureplus/**session**/darwin19/CONFIGUREPLUS_PWD                   # variable
+- .configureplus/**session**/darwin19/CONFIGUREPLUS_DIR_CONFIG            # variable
+- .configureplus/**session**/darwin19/CONFIGUREPLUS_VERSION               # variable
+- .configureplus/**session**/darwin19/CONFIGUREPLUS_DIR_OUT_SESSIONS      # variable
+- .configureplus/**session**/darwin19/CONFIGURE_MKTEMP                    # variable
+- .configureplus/**session**/darwin19/CONFIGURE_TIMESTAMP                 # variable
+- .configureplus/**session**/darwin19/CONFIGURE_DIR_OUTPUT                # variable
+- .configureplus/**session**/darwin19/CONFIGURE_FLAG_TOOL_BTEST           # variable
+- .configureplus/**session**/darwin19/CONFIGURE_OSTYPE                    # variable
+- .configureplus/**session**/darwin19/CONFIGURE_PKGNAME                   # variable
+- .configureplus/**session**/darwin19/CONFIGURE_DIR_TEMPLATE              # variable
+- .configureplus/**session**/darwin19/CONFIGURE_BASH_PROFILE_FILE         # variable
+- .configureplus/**session**/darwin19/CONFIGURE_VERSION                   # variable
 - .configureplus/**session**/darwin19.bash_local
 - .configureplus/**session**/darwin19.bash
 - .configureplus/**session**/darwin19.mk
