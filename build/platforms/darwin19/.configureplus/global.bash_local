@@ -1,9 +1,0 @@
-
-# Generated with configureplus (CONFIGUREPLUS_VERSION=0.11, CONFIGUREPLUS_PWD=/Users/muenalan/git-workdirs/github.com/muenalan/bash/configureplus/build/platforms/darwin19)
-
-CONFIGUREPLUS_SESSION='darwin19'
-CONFIGURE_DIR_OUTPUT='platforms'
-CONFIGURE_DIR_TEMPLATE='template'
-CONFIGURE_GIT_TAG='v0.0.1'
-CONFIGURE_PKGNAME='configureplus'
-CONFIGURE_VERSION='0.0.1'
