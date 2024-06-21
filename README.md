@@ -17,13 +17,40 @@ Moreover, a global fallback for variables is available (~/.config/configureplus/
  
 # Description
 
-Architecture dependency is traditionally detected with an universal **configure** tool. This packages provide similar means, and is not intended to be compatible to the **autoconf** chain. However, it solves a similar generic problem, but beeing more granular and more friendly.
+This is a configuration management utility designed to simplify and standardize the process of setting up project-specific configurations across different platforms and environments. Here are some key points about its usefulness:
+
+  1. Cross-platform configuration: It helps manage configuration settings across different operating systems (like macOS and Linux) by detecting the platform and creating platform-specific configurations.
+
+  2. Session-based configuration: It allows creating and managing different configuration sessions, which can be useful for handling multiple environments (e.g., development, testing, production) or different versions of a project.
+
+  3. Variable management: It provides a structured way to define, store, and retrieve configuration variables, both globally and for specific sessions.
+
+  4. Multiple output formats: The tool can generate configuration files in various formats, including Makefiles (.mk), Bash scripts (.bash and .bash_local), and JSON, making it versatile for different build systems and environments.
+
+  5. Documentation support: It allows adding documentation to configuration variables, which can be helpful for team collaboration and maintaining complex configurations.
+
+  6. Minimal dependencies: The tool is designed to work with minimal dependencies, primarily relying on Bash, which makes it portable across Unix-like systems.
+
+  7. Automation: It can automate the process of creating and updating configuration files, reducing manual errors and saving time in project setup.
+
+  8. Consistency: By providing a standardized way to manage configurations, it helps maintain consistency across different parts of a project or across multiple projects.
+
+  9. Flexibility: Users can easily add custom variables and extend the tool's functionality to suit specific project needs.
+
+In summary, it is particularly useful for developers and system administrators who need to manage complex configurations across different environments, automate setup processes, and maintain consistency in project configurations. 
+
+It is especially beneficial for open-source projects, cross-platform development, or any scenario where managing multiple configuration variants is necessary.
+
+Notably, no compatibility to the **autoconf** chain is planned.
 
 # Aims
 
 - Be universal, with absolute minimal prerequisites: bash.
+
 - Keep it simple. Files are variables, that are used at each step.
+
 - A recorded configuration should be transportable (such as stored in ~/.config for reuse).
+
 - Multiple configurations (sessions) should be able to co-exists. Allowing the switch to a particular **session-key**; testing different versions.
 
 # Supported platforms
