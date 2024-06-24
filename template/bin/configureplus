@@ -35,14 +35,14 @@ CONFIGUREPLUS_DIR_OUT_SESSIONS=$CONFIGUREPLUS_DIR_OUT/session
 CONFIGUREPLUS_ZERO_ARG_BASENAME=$(basename $0)
 CONFIGUREPLUS_DIR_CONFIG=~/.config/$SCRIPT_NAME
 
-OPTION_FLAG_GLOBAL=false
-OPTION_FLAG_DETECT_OS=false
+CONFIGUREPLUS_OPTION_FLAG_GLOBAL=false
+CONFIGUREPLUS_OPTION_FLAG_DETECT_OS=false
 
 # Help function
 
 function configureplus_help_show
 {
-    echo "Usage: $SCRIPT_NAME [--verbose] [--global] [--detect-os] <command> [args]"
+    echo "Usage: $SCRIPT_NAME [--verbose] [--global] [--detect-os] <command> [options] [args]"
     echo
     echo "Commands:"
     echo "  help <command>        Get help for a specific command"
@@ -133,7 +133,7 @@ function configureplus_set
     
     FNAME=$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/$1
     
-    if [ "$OPTION_FLAG_GLOBAL" = true ]; then
+    if [ "$CONFIGUREPLUS_OPTION_FLAG_GLOBAL" = true ]; then
 
         FNAME=~/.config/$SCRIPT_NAME/$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/$1
 
@@ -148,7 +148,7 @@ function configureplus_get
 {
     warn_local Getting $CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/$1
 
-    if [ -f $CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/$1 ] && [ "$OPTION_FLAG_GLOBAL" = true ]; then
+    if [ -f $CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/$1 ] && [ "$CONFIGUREPLUS_OPTION_FLAG_GLOBAL" = true ]; then
         
         FNAME=$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/$1
     
@@ -211,10 +211,14 @@ function configureplus_help
         readme)
             echo "Usage: configureplus readme"
             echo "Displays the readme for configureplus in markdown format."
+            echo "  Options:"
+            echo "   --f|format=markdown           Format"
             ;;
         man)
             echo "Usage: configureplus man"
             echo "Displays the full manual for configureplus in markdown format."
+            echo "  Options:"
+            echo "   --f|format=markdown           Format"
             ;;
         env)
             echo "Usage: configureplus env"
@@ -223,16 +227,19 @@ function configureplus_help
         generate)
             echo "Usage: configureplus generate"
             echo "Update the dynamic files from variables. Default folder: .configureplus. If --global is active, ~/.config/$SCRIPT_NAME/.$SCRIPT_NAME"
+            echo "  Options:"
+            echo "   --f|force           Force overwriting {planned}"
+            echo "   --d|dryrun          Dryrun            {planned}"
             ;;
         set)
-            echo "Usage: configureplus set <varname> <value> [global]"
+            echo "Usage: configureplus set <varname> <value>"
             echo "Sets a variable for the current session or globally."
             echo "  <varname>: The name of the variable to set"
             echo "  <value>: The value to assign to the variable"
             echo "  [--global]: Optional. If specified, sets the variable globally"
             ;;
         get)
-            echo "Usage: configureplus get <varname> [global]"
+            echo "Usage: configureplus get <varname>"
             echo "Gets the value of a variable from the current session or globally."
             echo "  <varname>: The name of the variable to get"
             echo "  [--global]: Optional. If specified, gets the global variable"
@@ -240,6 +247,8 @@ function configureplus_help
         status)
             echo "Usage: configureplus status"
             echo "Displays the local and global configuration tree structure."
+            echo "  Options:"
+            echo "   --f|format=filetree             Format (Default: FileTree) {planned}"
             ;;
         list)
             echo "Usage: configureplus list"
@@ -1107,12 +1116,12 @@ function configureplus_generate
 {
     local target_dir="$CONFIGUREPLUS_DIR_OUT"
 
-    if [ "$OPTION_FLAG_GLOBAL" = true ]; then
+    if [ "$CONFIGUREPLUS_OPTION_FLAG_GLOBAL" = true ]; then
         target_dir="$CONFIGUREPLUS_DIR_CONFIG/"
 
         cd $target_dir
 
-        echo_local Detected OPTION_FLAG_GLOBAL, switched to PWD=$PWD
+        echo_local Detected CONFIGUREPLUS_OPTION_FLAG_GLOBAL, switched to PWD=$PWD
 
     fi
 
@@ -1182,11 +1191,11 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
             -g|--global) 
 	        warn_local "Option g"
 	        shift 
-                OPTION_FLAG_GLOBAL=true
+                CONFIGUREPLUS_OPTION_FLAG_GLOBAL=true
 	        ;;
             -o|--detect-os) 
 	        warn_local "Option o"
-                OPTION_FLAG_DETECT_OS=true                
+                CONFIGUREPLUS_OPTION_FLAG_DETECT_OS=true                
                 configureplus_setup
                 configureplus_session_var_update_ostype
 	        shift 
