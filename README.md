@@ -1,256 +1,164 @@
+
 # configureplus
 
-Minimal autoconfig-like configure tool. Can be used to locally create a (.configureplus) folder, which holds variables about the platform. Custom variables can be added. 
-Moreover, a global fallback for variables is available (~/.config/configureplus/.configureplus)
+Configureplus is a minimal autoconf-like configure tool that depends only on bash. It simplifies the process of managing project configurations across different platforms and environments.
 
-# Synopsis
+## Features
 
- $ make install
- $ pushd build/platforms/darwin19
- $ make install-systemwide
- $ configureplus help
- $ cd somewhere
- $ configureplus                               # create a local .configureplus/ folder with default platform variables (use $OSTYPE)
- $ CONFIGUREPLUS_SESSION=local1 configureplus set ALPHA 123 # .. create a scratch session for later use
- $ CONFIGUREPLUS_SESSION=local1 configureplus get ALPHA # .. create a scratch session for later use
- 123
- 
-# Description
+- Cross-platform configuration management
+- Session-based configurations
+- Variable management with documentation support
+- Multiple output formats (Makefile, Bash, JSON)
+- Minimal dependencies (requires only bash)
+- Automated configuration file generation
+- Flexible and extensible
 
-This is a configuration management utility designed to simplify and standardize the process of setting up project-specific configurations across different platforms and environments. Here are some key points about its usefulness:
+## Installation
 
-  1. Cross-platform configuration: It helps manage configuration settings across different operating systems (like macOS and Linux) by detecting the platform and creating platform-specific configurations
+### macOS (darwin19)
 
-  2. Session-based configuration: It allows creating and managing different configuration sessions, which can be useful for handling multiple environments (e.g., development, testing, production) or different versions of a project.
+```bash
+$ make
+$ cd build
+$ make
+$ cd platform/darwin19
+$ make install  # for user profile installation
+# OR
+$ make install-systemwide  # for system-wide installation
+```
 
-  3. Variable management: It provides a structured way to define, store, and retrieve configuration variables, both globally and for specific sessions.
+### Linux (linux-gnu)
 
-  4. Multiple output formats: The tool can generate configuration files in various formats, including Makefiles (.mk), Bash scripts (.bash and .bash_local), and JSON, making it versatile for different build systems and environments.
+```bash
+$ make
+$ cd build
+$ make
+$ cd platform/linux-gnu
+$ make install  # for user profile installation
+# OR
+$ make install-systemwide  # for system-wide installation
+```
 
-  5. Documentation support: It allows adding documentation to configuration variables, which can be helpful for team collaboration and maintaining complex configurations.
+## Usage
 
-  6. Minimal dependencies: The tool is designed to work with minimal dependencies, primarily relying on Bash, which makes it portable across Unix-like systems.
+Basic usage:
 
-  7. Automation: It can automate the process of creating and updating configuration files, reducing manual errors and saving time in project setup.
+```bash
+$ configureplus <command> [args]
+```
 
-  8. Consistency: By providing a standardized way to manage configurations, it helps maintain consistency across different parts of a project or across multiple projects.
+Available commands:
 
-  9. Flexibility: Users can easily add custom variables and extend the tool's functionality to suit specific project needs.
+- `man`: Show the manual page (in markdown format)
+- `help <command>`: Get help for a specific command
+- `env`: Show environment variables
+- `set <varname> <value>`: Set a variable (for the current session or globally)
+- `get <varname>`: Get a variable value
+- `status`: Show local/global configuration tree
+- `list`: List local/global session paths
 
-In summary, it is particularly useful for developers and system administrators who need to manage complex configurations across different environments, automate setup processes, and maintain consistency in project configurations. 
+## Examples
 
-It is especially beneficial for open-source projects, cross-platform development, or any scenario where managing multiple configuration variants is necessary.
+```bash
+# Set a variable
+$ configureplus set ALPHA 123
 
-Notably, no compatibility to the **autoconf** chain is planned.
+# Get a variable
+$ configureplus get ALPHA
+123
 
-# Aims
+# Create a local session (ostype) SESSION var
+$ configureplus get SESSION
 
-- Be universal, with absolute minimal prerequisites: bash.
+# Fetch (create if not exists) a local session 'local1', SESSION var 
+$ CONFIGUREPLUS_SESSION=local1 configureplus get SESSION
 
-- Keep it simple. Files are variables, that are used at each step.
+# Update global session (ostype)
+$ configureplus --global
+```
 
-- A recorded configuration should be transportable (such as stored in ~/.config for reuse).
+## Variable Lookup Order
 
-- Multiple configurations (sessions) should be able to co-exists. Allowing the switch to a particular **session-key**; testing different versions.
+The `get` function in configureplus searches for variables in a specific order across local, session, and global directories. This allows for flexible configuration management with clear precedence rules.
 
-# Supported platforms
-This is a multiarch package, where during the build process the platform is detected and a architecture dependant version is manufactured into the platforms directory.
+### Search Order
 
-## darwin19 (macos)
-There are two alternative installation options. Per default, the program is unpacked into this directory, and the userprofile is modified to include the corresponding bin/ into the PATH system variable.
+When you use `configureplus get <varname>`, the tool searches for the variable in the following order:
 
-### INSTALL userprofile (darwin19)
+1. **Local Session**: `$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/<varname>`
+   - This is specific to the current working directory and session.
 
-    $ make
-      .. building target platform
-    $ cd build
-    $ make
-    $ cd platform/darwin19
-    $ make install
-      .. installing userprofile
+2. **Global Session**: `$CONFIGUREPLUS_DIR_CONFIG/$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/<varname>`
+   - This is specific to the current session but applies across all directories.
 
-### INSTALL systemwide (darwin19)
+3. **Global Default**: `$CONFIGUREPLUS_DIR_CONFIG/$CONFIGUREPLUS_DIR_OUT/global/<varname>`
+   - This is the fallback for all sessions and directories.
 
-    $ make
-      .. building target platform
-    $ cd build
-    $ make
-    $ cd platform/darwin19
-    $ make install-systemwide
-      .. installing systemwide
+### Example
 
-## linux-gnu
-There are two alternative installation options. Per default, the program is unpacked into this directory, and the userprofile is modified to include the corresponding bin/ into the PATH system variable.
+Let's say you're looking for the variable `ALPHA`:
 
-### INSTALL userprofile (linux-gnu)
+```bash
+$ configureplus get ALPHA
+```
 
-    $ make
-      .. building target platform
-    $ cd build
-    $ make
-    $ cd platform/linux-gnu
-    $ make install
-      .. installing userprofile
+The tool will search in this order:
 
-### INSTALL systemwide (linux-gnu)
+1. `./.configureplus/session/current_session/ALPHA`
+2. `~/.config/configureplus/.configureplus/session/current_session/ALPHA`
+3. `~/.config/configureplus/.configureplus/global/ALPHA`
 
-    $ make
-      .. building target platform
-    $ cd build
-    $ make
-    $ cd platform/linux-gnu
-    $ make install-systemwide
-      .. installing systemwide
+It will return the value from the first location where the variable is found. If the variable is not found in any of these locations, it will return an empty result.
 
-# SYNOPSIS (darwin19)
+### Using the `global` Flag
 
-    # Warn, because .configureplus/session/darwin19/CONFIGUREPLUS_SESSION is not set
-    
-    $ configureplus
-    [WARN stdout, configureplus] : { ERROR_NOT_SET_CONFIGUREPLUS_SESSION }
-    [WARN stdout, configureplus] : { Will invoke: echo darwin19 }
-    [WARN stdout, configureplus] : { Retry configureplus again. }    
+If you use the `global` flag:
 
-    $ configureplus
-    [WARN stdout, configureplus] : { Loading .configureplus/global/CONFIGUREPLUS_SESSION=darwin19 }
-    - .configureplus/session/darwin19/CONFIGUREPLUS_DIR_CONFIG = /Users/muenalan/.config/configureplus
-    - .configureplus/session/darwin19/CONFIGUREPLUS_DIR_OUT = .configureplus
-    - .configureplus/session/darwin19/CONFIGUREPLUS_DIR_OUT_SESSIONS = .configureplus/session
-    - .configureplus/session/darwin19/CONFIGUREPLUS_PWD = /Users/muenalan/git-workdirs/github.com/muenalan/bash/configureplus
-    - .configureplus/session/darwin19/CONFIGUREPLUS_SESSION = 'darwin19' [session-id (such as $OSTYPE)]
-    - .configureplus/session/darwin19/CONFIGUREPLUS_VERSION = 0.1
-    - .configureplus/session/darwin19/CONFIGURE_BASH_PROFILE_FILE = /Users/muenalan/.bash_profile
-    - .configureplus/session/darwin19/CONFIGURE_DIR_OUTPUT = 'platforms' [folder for general and os-specific files (merged with CONFIG_DIR_TEMPLATE)]
-    - .configureplus/session/darwin19/CONFIGURE_DIR_TEMPLATE = 'template' [folder for os-specific files and template files merged]
-    - .configureplus/session/darwin19/CONFIGURE_FLAG_TOOL_BTEST = '' [btest *testing* tool path]
-    - .configureplus/session/darwin19/CONFIGURE_GIT_TAG = v0.0.1
-    - .configureplus/session/darwin19/CONFIGURE_MKTEMP = '/var/folders/px/ctnmlq5n5gbf154mj25wzdxh0000gn/T/tmp.FU7FWYDy' [make session temp dir]
-    - .configureplus/session/darwin19/CONFIGURE_OSTYPE = 'darwin19' [current os identifier]
-    - .configureplus/session/darwin19/CONFIGURE_PKGNAME = 'configureplus' [distribution package name]
-    - .configureplus/session/darwin19/CONFIGURE_TIMESTAMP = Mon May 22 11:41:16 CEST 2023
-    - .configureplus/session/darwin19/CONFIGURE_VERSION = '0.0.1'  [distribution version]
-    INFO: .configureplus/global.mk generated
-    INFO: .configureplus/global.bash generated
-    INFO: .configureplus/global.bash_local generated
-    INFO: .configureplus/session/darwin19.mk generated
-    INFO: .configureplus/session/darwin19.bash generated
-    INFO: .configureplus/session/darwin19.bash_local generated
+```bash
+$ configureplus get ALPHA global
+```
 
-    $ configureplus
-    Configuring (darwin19) ...
-    - .configureplus/session/darwin19/CONFIGUREPLUS_DIR_CONFIG = /Users/muenalan/.config/configureplus
-    - .configureplus/session/darwin19/CONFIGUREPLUS_DIR_OUT = .configureplus
-    - .configureplus/session/darwin19/CONFIGUREPLUS_DIR_OUT_SESSIONS = .configureplus/session
-    - .configureplus/session/darwin19/CONFIGUREPLUS_PWD = /Users/muenalan/git-workdirs/github.com/muenalan/bash/configureplus
-    - .configureplus/session/darwin19/CONFIGUREPLUS_SESSION = darwin19
-    - .configureplus/session/darwin19/CONFIGUREPLUS_VERSION = 0.1
-    - .configureplus/session/darwin19/CONFIGURE_BASH_PROFILE_FILE = /Users/muenalan/.bash_profile
-    - .configureplus/session/darwin19/CONFIGURE_DIR_OUTPUT = 'platforms' [folder for general and os-specific files (merged with CONFIG_DIR_TEMPLATE)]
-    - .configureplus/session/darwin19/CONFIGURE_DIR_TEMPLATE = 'template' [folder for os-specific files and template files merged]
-    - .configureplus/session/darwin19/CONFIGURE_FLAG_TOOL_BTEST = '' [btest *testing* tool path]
-    - .configureplus/session/darwin19/CONFIGURE_MKTEMP = '/var/folders/px/ctnmlq5n5gbf154mj25wzdxh0000gn/T/tmp.2i0aHmR6' [make session temp dir]
-    - .configureplus/session/darwin19/CONFIGURE_OSTYPE = 'darwin19' [current os identifier]
-    - .configureplus/session/darwin19/CONFIGURE_PKGNAME = 'configureplus' [distribution package name]
-    - .configureplus/session/darwin19/CONFIGURE_TIMESTAMP = Thu May 18 16:54:08 CEST 2023
-    - .configureplus/session/darwin19/CONFIGURE_VERSION = '0.1'    [distribution version]
-    - INFO: .configureplus/global.mk generated
-    - INFO: .configureplus/global.bash generated
-    - INFO: .configureplus/global.bash_local generated
-    - INFO: .configureplus/session/darwin19.mk generated
-    - INFO: .configureplus/session/darwin19.bash generated
-    - INFO: .configureplus/session/darwin19.bash_local generated
-    $ echo value1 .configureplus/global/var1
-    $ echo value2 .configureplus/global/var2
-    $ echo value3 .configureplus/global/var3
-    $ cat .configureplus/dynamic.bash
-      >$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/CONFIGURE_BASH_PROFILE_FILE echo $HOME/.bash_profile
-      >$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/CONFIGUREPLUS_DIR_CONFIG    echo $HOME/.config/$CONFIGURE_PKG
-      >$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/CONFIGURE_OSTYPE            echo $OSTYPE 
-      >$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/CONFIGURE_MKTEMP            echo `mktemp -d` 
-      >$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/CONFIGURE_FLAG_TOOL_BTEST   which btest
-      >$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/CONFIGURE_TIMESTAMP         date
-  
-# INPUT .configureplus
-Files are used to configure the configuration variables.
+The tool will skip the local session search and only look in the global session and global default locations.
 
-# SPEC
+### Listing Available Sessions
 
-    - .configureplus/global/**VARNAME**                      : global variables, stored as single files
-    - .confgureplus/**global**.mk                            : global variables single-file (Makefile part)
-    - .confgureplus/**global**.bash                          : global variables single-file (bash source, export)
-    - .confgureplus/**global**.bash_local                    : global variables single-file (bash source)
-    - .configureplus/doc/**VARNAME**                         : variable description, single file
-    - .confgureplus/session/**session-id**/**VARSESSION-ID** : variable file of session **session-id**
-    - .confgureplus/session/**session-id**.mk                : session as include'able Makefile part
-    - .confgureplus/session/**session-id**.bash              : session as include'able bash source (exported variables)
-    - .confgureplus/session/**session-id**.bash_local        : session as include'able bash source
-    - .confgureplus/**dynamic**.bash                         : script invoked by configureplus
-    - .confgureplus/**currentsession**.mk                    : include'able session single-file (Makefile part)
-    - .confgureplus/**currentsession**.bash                  : include'able session single-file (bash, export)
-    - .confgureplus/**currentsession**.bash_local            : include'able session single-file (bash)
+You can use the `list` command to see all available sessions:
 
-## .configureplus/**doc**/varname
-Each file contains annotation for a single variable. These can be global, or dynamically declared.
+```bash
+$ configureplus list
+```
 
-    - .configureplus/**doc**/CONFIGUREPLUS_SESSIONS
-    - .configureplus/**doc**/CONFIGURE_MKTEMP
-    - .configureplus/**doc**/CONFIGURE_DIR_OUTPUT_SESSIONS
-    - .configureplus/**doc**/CONFIGURE_DIR_OUTPUT
-    - .configureplus/**doc**/CONFIGURE_FLAG_TOOL_BTEST
-    - .configureplus/**doc**/CONFIGURE_OSTYPE
-    - .configureplus/**doc**/CONFIGURE_PKGNAME
-    - .configureplus/**doc**/CONFIGURE_DIR_TEMPLATE
-    - .configureplus/**doc**/CONFIGURE_VERSION
+This will show you:
+- Global sessions in `~/.config/configureplus/.configureplus/session/`
+- Local sessions in the current directory's `.configureplus/session/` (if it exists)
 
+Understanding this search order helps you manage your configurations effectively across different scopes and sessions.
 
-# EXAMPLE
+## Configuration Files
 
-    - .configureplus
-    - .configureplus/Makefile
-    - .configureplus/**dynamic.bash**
-    - .configureplus/**global**
-    - .configureplus/**global**/CONFIGUREPLUS_SESSION                         # variable
-    - .configureplus/**global**/CONFIGURE_DIR_OUTPUT                          # variable
-    - .configureplus/**global**/CONFIGURE_PKGNAME                             # variable
-    - .configureplus/**global**/CONFIGURE_DIR_TEMPLATE                        # variable
-    - .configureplus/**global**/CONFIGURE_VERSION                             # variable
-    - .configureplus/**global.bash_local**
-    - .configureplus/**global.bash**
-    - .configureplus/**global.mk**
-    - .configureplus/**doc**
-    - .configureplus/**doc**/CONFIGUREPLUS_SESSIONS
-    - .configureplus/**doc**/CONFIGURE_MKTEMP
-    - .configureplus/**doc**/CONFIGURE_DIR_OUTPUT_SESSIONS
-    - .configureplus/**doc**/CONFIGURE_DIR_OUTPUT
-    - .configureplus/**doc**/CONFIGURE_FLAG_TOOL_BTEST
-    - .configureplus/**doc**/CONFIGURE_OSTYPE
-    - .configureplus/**doc**/CONFIGURE_PKGNAME
-    - .configureplus/**doc**/CONFIGURE_DIR_TEMPLATE
-    - .configureplus/**doc**/CONFIGURE_VERSION
-    - .configureplus/**session**
-    - .configureplus/**session**/darwin19
-    - .configureplus/**session**/darwin19/CONFIGUREPLUS_DIR_OUT               # variable
-    - .configureplus/**session**/darwin19/CONFIGUREPLUS_SESSION               # variable
-    - .configureplus/**session**/darwin19/CONFIGUREPLUS_PWD                   # variable
-    - .configureplus/**session**/darwin19/CONFIGUREPLUS_DIR_CONFIG            # variable
-    - .configureplus/**session**/darwin19/CONFIGUREPLUS_VERSION               # variable
-    - .configureplus/**session**/darwin19/CONFIGUREPLUS_DIR_OUT_SESSIONS      # variable
-    - .configureplus/**session**/darwin19/CONFIGURE_MKTEMP                    # variable
-    - .configureplus/**session**/darwin19/CONFIGURE_TIMESTAMP                 # variable
-    - .configureplus/**session**/darwin19/CONFIGURE_DIR_OUTPUT                # variable
-    - .configureplus/**session**/darwin19/CONFIGURE_FLAG_TOOL_BTEST           # variable
-    - .configureplus/**session**/darwin19/CONFIGURE_OSTYPE                    # variable
-    - .configureplus/**session**/darwin19/CONFIGURE_PKGNAME                   # variable
-    - .configureplus/**session**/darwin19/CONFIGURE_DIR_TEMPLATE              # variable
-    - .configureplus/**session**/darwin19/CONFIGURE_BASH_PROFILE_FILE         # variable
-    - .configureplus/**session**/darwin19/CONFIGURE_VERSION                   # variable
-    - .configureplus/**session**/darwin19.bash_local
-    - .configureplus/**session**/darwin19.bash
-    - .configureplus/**session**/darwin19.mk
-    - .configureplus/**currentsession.bash**
-    - .configureplus/**currentsession.mk**
+Configureplus generates several configuration files:
 
+- `.configureplus/global.mk`: Global Makefile include
+- `.configureplus/global.bash`: Global Bash script (with exports)
+- `.configureplus/global.bash_local`: Global Bash script (without exports)
+- `.configureplus/global.json`: Global JSON configuration
+- `.configureplus/session/<session-id>.mk`: Session-specific Makefile include
+- `.configureplus/session/<session-id>.bash`: Session-specific Bash script (with exports)
+- `.configureplus/session/<session-id>.bash_local`: Session-specific Bash script (without exports)
+- `.configureplus/session/<session-id>.json`: Session-specific JSON configuration
 
-# Author
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## License
+
+[Add your chosen license here]
+
+## Author
 
 Murat Uenalan <murat.uenalan@gmail.com>
+
+
+    
+

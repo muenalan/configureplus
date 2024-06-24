@@ -17,22 +17,18 @@
 #        NOTES: This is a foundational tool, where development is towards robustness instead of innovation.
 #       AUTHOR: Murat Uenalan <murat.uenalan@gmail.com>
 # ORGANIZATION: Your Organization Name (if applicable)
-#      VERSION: 0.13
 #      CREATED: 03/16/2023
 #     REVISION: 06/21/2024
 #==============================================================================
 
 # Script version
-CONFIGUREPLUS_VERSION=0.13
+CONFIGUREPLUS_VERSION=0.0.13
 
 # Set script name
 SCRIPT_NAME=$(basename "$0")
 EXEFILE=`which $0`
 
 # COMMONS ENV
-
-CONFIGUREPLUS_VERSION=0.13
-
 CONFIGUREPLUS_PWD=$PWD
 CONFIGUREPLUS_DIR_OUT=.$SCRIPT_NAME
 CONFIGUREPLUS_DIR_OUT_SESSIONS=$CONFIGUREPLUS_DIR_OUT/session
@@ -40,6 +36,7 @@ CONFIGUREPLUS_ZERO_ARG_BASENAME=$(basename $0)
 CONFIGUREPLUS_DIR_CONFIG=~/.config/$SCRIPT_NAME
 
 OPTION_FLAG_GLOBAL=false
+OPTION_FLAG_DETECT_OS=false
 
 # Help function
 
@@ -329,12 +326,14 @@ $ configureplus set ALPHA 123
 $ configureplus get ALPHA
 123
 
-# Create a local session
+# Create a local session (ostype) SESSION var
+$ configureplus get SESSION
+
+# Fetch (create if not exists) a local session 'local1', SESSION var 
 $ CONFIGUREPLUS_SESSION=local1 configureplus get SESSION
 
-# Update the global session
-$ cd ~/.config/configureplus
-$ configureplus
+# Update global session (ostype)
+$ configureplus --global
 ```
 
 ## Variable Lookup Order
@@ -1186,7 +1185,8 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
                 OPTION_FLAG_GLOBAL=true
 	        ;;
             -o|--detect-os) 
-	        warn_local "Option o" 
+	        warn_local "Option o"
+                OPTION_FLAG_DETECT_OS=true                
                 configureplus_setup
                 configureplus_session_var_update_ostype
 	        shift 
