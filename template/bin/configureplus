@@ -232,13 +232,13 @@ function configureplus_help
             echo "Sets a variable for the current session or globally."
             echo "  <varname>: The name of the variable to set"
             echo "  <value>: The value to assign to the variable"
-            echo "  [global]: Optional. If specified, sets the variable globally"
+            echo "  [--global]: Optional. If specified, sets the variable globally"
             ;;
         get)
             echo "Usage: configureplus get <varname> [global]"
             echo "Gets the value of a variable from the current session or globally."
             echo "  <varname>: The name of the variable to get"
-            echo "  [global]: Optional. If specified, gets the global variable"
+            echo "  [--global]: Optional. If specified, gets the global variable"
             ;;
         status)
             echo "Usage: configureplus status"
