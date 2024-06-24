@@ -27,6 +27,7 @@ CONFIGUREPLUS_VERSION=0.13
 
 # Set script name
 SCRIPT_NAME=$(basename "$0")
+EXEFILE=`which $0`
 
 # COMMONS ENV
 
@@ -1138,31 +1139,89 @@ function configureplus_setup
 }
 
 # Main script logic
+
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
 
-    if [[ "$1" == "--verbose" ]]; then
+    # Note that we use `"$@"' to let each command-line parameter expand to a 
+    # separate word. The quotes around `$@' are essential!
+    # We need TEMP as the `eval set --' would nuke the return value of getopt.
+
+    GETOPT_RESULTS=`getopt -o dgon:c:: --long debug,global,detect-os,name:,c-long:: -n $SCRIPT_NAME -- "$@"`
+
+    if [ $? != 0 ] ; then
         
-        CONFIGUREPLUS_DEBUG=$0
+        echo "*FATAL* getopt invokation failed. Terminating..." >&2
         
-        shift
+        exit 1 
     fi
 
-    if [[ "$1" == "--global" ]]; then
-        
-        OPTION_FLAG_GLOBAL=true
-        
-        shift
-    fi
+    # Note the quotes around `$GETOPT_RESULTS': they are essential!
 
-    if [[ "$1" == '--detect-os' ]]; then
+    warn_local getopt RESULTS: "$GETOPT_RESULTS"
+    
+    eval set -- "$GETOPT_RESULTS"
 
-        configureplus_setup
+    while true ; do
+        case "$1" in
+            -d|--debug) 
+	        warn_local "Option d" 
+                CONFIGUREPLUS_DEBUG=$0
+	        shift 
+	        ;;
+            -g|--global) 
+	        warn_local "Option g"
+	        shift 
+                OPTION_FLAG_GLOBAL=true
+	        ;;
+            -o|--detect-os) 
+	        warn_local "Option o" 
+                configureplus_setup
+                configureplus_session_var_update_ostype
+	        shift 
+	        ;;
+            -n|--name) 
+	        warn_local "Option n, argument \`$2'" ; 
+	        shift 2 
+	        ;;
+            -c|--c-long) 
+                # c has an optional argument. As we are in quoted mode,
+                # an empty parameter will be generated if its optional
+                # argument is not found.
+                case "$2" in
+                    "") 
+		        warn_local "Option c, no argument"
+		        shift 2 
+		        ;;
+                    *)  
+		        warn_local "Option c, argument \`$2'"
+		        shift 2 
+		        ;;
+                esac 
+	        ;;
+            --) 
+	        shift 
+	        break 
+	        ;;
+            *) 
+	        echo "Internal error!" 
+	        exit 1 
+	        ;;
+        esac
+    done
 
-        configureplus_session_var_update_ostype
+    warn_local "Remaining getopt arguments:"
 
-        shift
+    for arg;
+    do 
+        warn_local '    - ARG:  '"\`$arg'" ; 
+    done
 
-    fi
+
+
+
+
+
+
 
     # Default command is now 'generate'
     COMMAND=${1:-generate}
