@@ -122,9 +122,21 @@ function configureplus_status
 
 function configureplus_set
 {
+    if [ -z "$1" ]; then
+
+        echo_local "ARGUMENT_MISSING at pos 1: configureplus_set requires key argument."
+
+    fi
+    
+    if [ -z "$2" ]; then
+
+        echo_local "ARGUMENT_MISSING at pos 2: configureplus_set requires value argument."
+
+    fi
+    
     FNAME=$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/$1
     
-    if [ "$3" == "global" ]; then
+    if [ "$OPTION_FLAG_GLOBAL" = true ]; then
 
         FNAME=~/.config/$SCRIPT_NAME/$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/$1
 
