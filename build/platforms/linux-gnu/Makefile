@@ -5,27 +5,42 @@ include .configureplus/currentsession.mk
 PRE=/usr/local
 DIR_TEMPLATE=$(CONFIGURE_PKGNAME)/$(PRE)
 
-
 install-systemwide:
 	chmod +x $(DIR_TEMPLATE)/bin/*
 	mkdir -p $(PRE)/bin && cp -r $(DIR_TEMPLATE)/bin/* $(PRE)/bin/
+	make -B install-systemwide-lib
+	make -B install-systemwide-share
+	make -B install-systemwide-doc
+	-mkdir -p ~/.config/$(CONFIGURE_PKGNAME)/
+	-cp -r .configureplus ~/.config/$(CONFIGURE_PKGNAME)/
+
+FILES=$(DIR_TEMPLATE)/lib/*
+
+install-systemwide-lib:
 	install -d $(PRE)/lib/$(CONFIGURE_PKGNAME) || mkdir -p $(PRE)/lib/$(CONFIGURE_PKGNAME)
 	@if [ -n "$(FILES)" ]; then \
 		echo install -m 755 -t $(PRE)/lib/$(CONFIGURE_PKGNAME) $(FILES); \
 		install -m 755 -t $(PRE)/lib/$(CONFIGURE_PKGNAME) $(FILES); \
 	fi
+
+FILES=$(DIR_TEMPLATE)/share/*
+
+install-systemwide-share:
 	install -d $(PRE)/share/$(CONFIGURE_PKGNAME) || mkdir -p $(PRE)/share/$(CONFIGURE_PKGNAME)
 	@if [ -n "$(FILES)" ]; then \
 		echo install -m 755 -t $(PRE)/share/$(CONFIGURE_PKGNAME) $(FILES); \
 		install -m 755 -t $(PRE)/share/$(CONFIGURE_PKGNAME) $(FILES); \
 	fi
-	install -d $(PRE)/share/$(CONFIGURE_PKGNAME) || mkdir -p $(PRE)/share/$(CONFIGURE_PKGNAME)
+
+FILES=$(DIR_TEMPLATE)/doc/*
+
+install-systemwide-doc:
+	install -d $(PRE)/doc/$(CONFIGURE_PKGNAME) || mkdir -p $(PRE)/doc/$(CONFIGURE_PKGNAME)
 	@if [ -n "$(FILES)" ]; then \
-	echo install -m 755 -t $(PRE)/share/$(CONFIGURE_PKGNAME) $(FILES); \
-	install -m 755 -t $(PRE)/share/$(CONFIGURE_PKGNAME) $(FILES); \
+	echo install -m 755 -t $(PRE)/doc/$(CONFIGURE_PKGNAME) $(FILES); \
+	install -m 755 -t $(PRE)/doc/$(CONFIGURE_PKGNAME) $(FILES); \
 	fi
-	-mkdir -p ~/.config/$(CONFIGURE_PKGNAME)/
-	-cp -r .configureplus ~/.config/$(CONFIGURE_PKGNAME)/
+
 
 install-userprofile:
 	./bin/install-userprofile.sh
