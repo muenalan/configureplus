@@ -9,10 +9,29 @@ DIR_TEMPLATE=$(CONFIGURE_PKGNAME)/$(PRE)
 install-systemwide:
 	chmod +x $(DIR_TEMPLATE)/bin/*
 	mkdir -p $(PRE)/bin && cp -r $(DIR_TEMPLATE)/bin/* $(PRE)/bin/
-	mkdir -p $(PRE)/lib/$(CONFIGURE_PKGNAME)   && cp -r $(DIR_TEMPLATE)/lib/* $(PRE)/lib/$(CONFIGURE_PKGNAME)
-	mkdir -p $(PRE)/var/$(CONFIGURE_PKGNAME)   && cp -r $(DIR_TEMPLATE)/var/* $(PRE)/var/$(CONFIGURE_PKGNAME)
-	mkdir -p $(PRE)/share/$(CONFIGURE_PKGNAME) && cp -r $(DIR_TEMPLATE)/share/* $(PRE)/share/$(CONFIGURE_PKGNAME)
-	-mkdir ~/.config/$(CONFIGURE_PKGNAME)/
+
+	install -d $(PRE)/lib/$(CONFIGURE_PKGNAME) || mkdir -p $(PRE)/lib/$(CONFIGURE_PKGNAME)
+
+        @if [ -n "$(FILES)" ]; then \
+                echo install -m 755 -t $(PRE)/lib/$(CONFIGURE_PKGNAME) $(FILES); \
+                install -m 755 -t $(PRE)/lib/$(CONFIGURE_PKGNAME) $(FILES); \
+        fi
+
+        install -d $(PRE)/share/$(CONFIGURE_PKGNAME) || mkdir -p $(PRE)/share/$(CONFIGURE_PKGNAME)
+
+        @if [ -n "$(FILES)" ]; then \
+                echo install -m 755 -t $(PRE)/share/$(CONFIGURE_PKGNAME) $(FILES); \
+                install -m 755 -t $(PRE)/share/$(CONFIGURE_PKGNAME) $(FILES); \
+        fi
+
+        install -d $(PRE)/share/$(CONFIGURE_PKGNAME) || mkdir -p $(PRE)/share/$(CONFIGURE_PKGNAME)
+
+        @if [ -n "$(FILES)" ]; then \
+                echo install -m 755 -t $(PRE)/share/$(CONFIGURE_PKGNAME) $(FILES); \
+                install -m 755 -t $(PRE)/share/$(CONFIGURE_PKGNAME) $(FILES); \
+        fi
+
+	-mkdir -p ~/.config/$(CONFIGURE_PKGNAME)/
 	-cp -r .configureplus ~/.config/$(CONFIGURE_PKGNAME)/
 
 install-userprofile:
