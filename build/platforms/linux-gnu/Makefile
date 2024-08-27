@@ -14,7 +14,7 @@ install-systemwide:
 	-mkdir -p ~/.config/$(CONFIGURE_PKGNAME)/
 	-cp -r .configureplus ~/.config/$(CONFIGURE_PKGNAME)/
 
-FILES=$(DIR_TEMPLATE)/lib/*
+FILES=$(wildcard $(DIR_TEMPLATE)/lib/*)
 
 install-systemwide-lib:
 	install -d $(PRE)/lib/$(CONFIGURE_PKGNAME) || mkdir -p $(PRE)/lib/$(CONFIGURE_PKGNAME)
@@ -23,7 +23,7 @@ install-systemwide-lib:
 		install -m 755 -t $(PRE)/lib/$(CONFIGURE_PKGNAME) $(FILES); \
 	fi
 
-FILES=$(DIR_TEMPLATE)/share/*
+FILES=$(wildcard $(DIR_TEMPLATE)/share/*)
 
 install-systemwide-share:
 	install -d $(PRE)/share/$(CONFIGURE_PKGNAME) || mkdir -p $(PRE)/share/$(CONFIGURE_PKGNAME)
@@ -32,7 +32,7 @@ install-systemwide-share:
 		install -m 755 -t $(PRE)/share/$(CONFIGURE_PKGNAME) $(FILES); \
 	fi
 
-FILES=$(DIR_TEMPLATE)/doc/*
+FILES=$(wildcard $(DIR_TEMPLATE)/doc/*)
 
 install-systemwide-doc:
 	install -d $(PRE)/doc/$(CONFIGURE_PKGNAME) || mkdir -p $(PRE)/doc/$(CONFIGURE_PKGNAME)
