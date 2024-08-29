@@ -1,6 +1,6 @@
-Package: ob
-Version: 0.1
+Package: configureplus
+Version: 0.14.0
 Maintainer: MUENALAN
 Architecture: all
-Description: bash dynamical objects
+Description: minimal autoconf-like configure tool that depends only on bash
 Depends: bash
