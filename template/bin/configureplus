@@ -82,7 +82,9 @@ fi
 
 function echo_local
 {
-    >&2 echo "[INFO stdout, $CONFIGUREPLUS_ZERO_ARG_BASENAME] : {" $@ "}" 
+   if [ "$CONFIGUREPLUS_DEBUG" -ge "1" ]; then
+       >&2 echo "[INFO stdout, $CONFIGUREPLUS_ZERO_ARG_BASENAME] : {" $@ "}"
+   fi
 }
 
 function warn_local
@@ -149,7 +151,7 @@ function configureplus_set
 
     fi
     
-    warn_local Setting $FNAME
+    echo_local Setting $FNAME
 
     >$FNAME echo $2
 }
@@ -720,19 +722,20 @@ function configureplus_session_identify
     
 if [[ -z "$CONFIGUREPLUS_SESSION" ]]; then
 
-    warn_local CONFIGUREPLUS_SESSION not set.
+    echo_local CONFIGUREPLUS_SESSION not set at start.
 
     if [ -f "$CONFIGUREPLUS_DIR_OUT/global/CONFIGUREPLUS_SESSION" ]; then
 
 	CONFIGUREPLUS_SESSION=$(cat $CONFIGUREPLUS_DIR_OUT/global/CONFIGUREPLUS_SESSION)
 	
-	warn_local Setting to $CONFIGUREPLUS_SESSION "(from $CONFIGUREPLUS_DIR_OUT/global/CONFIGUREPLUS_SESSION)"
+	echo_local Setting to $CONFIGUREPLUS_SESSION "(from $CONFIGUREPLUS_DIR_OUT/global/CONFIGUREPLUS_SESSION)"
 	
     else
 
         if [ "$CONFIGUREPLUS_DIR_OUT" == `basename $PWD` ]; then
 
             warn_local "init $CONFIGUREPLUS_DIR_OUT ... *SKIP* because we are currently inside one."
+
             exit
         fi
 
@@ -806,7 +809,7 @@ function configureplus_dynamic_source
 {
     echo_local_level 2 configureplus_dynamic_source ..
 
-    warn_local source $CONFIGUREPLUS_DIR_OUT/dynamic.bash
+    echo_local source $CONFIGUREPLUS_DIR_OUT/dynamic.bash
 
     source $CONFIGUREPLUS_DIR_OUT/dynamic.bash
 
@@ -1299,7 +1302,7 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
         esac
     done
 
-    warn_local "Remaining getopt arguments:"
+    echo_local "Remaining getopt arguments:"
 
     for arg;
     do 
