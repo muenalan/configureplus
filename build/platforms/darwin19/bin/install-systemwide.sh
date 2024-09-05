@@ -1,5 +1,9 @@
 #!/bin/bash
 
+echo "*WARN* Discontinued $0. Now using dpkg pipeline."
+
+exit
+
 if [[ ! "$CONFIGUREPLUS_DEBUG" ]]; then
 
     CONFIGUREPLUS_DEBUG=
@@ -22,6 +26,7 @@ source .configureplus/currentsession.bash
 echo INSTALL SYSTEMWIDE DIR_TEMPLATE=$DIR_TEMPLATE
 
 chmod +x $DIR_TEMPLATE/bin/*
+
 cp -r $DIR_TEMPLATE/bin/* $PRE/bin/
 
 echo Step 1

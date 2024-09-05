@@ -22,7 +22,7 @@
 #==============================================================================
 
 # Script version
-CONFIGUREPLUS_VERSION=0.14.0
+CONFIGUREPLUS_VERSION=0.14.1
 
 # Set script name
 SCRIPT_NAME=$(basename "$0")
@@ -144,16 +144,18 @@ function configureplus_set
     fi
     
     FNAME=$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/$1
-    
+
     if [ "$CONFIGUREPLUS_OPTION_FLAG_GLOBAL" = true ]; then
 
         FNAME=~/.config/$SCRIPT_NAME/$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/$1
 
     fi
-    
-    echo_local Setting $FNAME
 
-    >$FNAME echo $2
+    shift
+    
+    echo_local Setting $FNAME to value \"$2\" "(all values \"$*\")"
+
+    >$FNAME echo $*
 }
 
 function configureplus_get
