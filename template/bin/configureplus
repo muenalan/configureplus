@@ -22,7 +22,7 @@
 #==============================================================================
 
 # Script version
-CONFIGUREPLUS_VERSION=0.14.1
+CONFIGUREPLUS_VERSION=0.14.2
 
 # Set script name
 SCRIPT_NAME=$(basename "$0")
@@ -127,6 +127,13 @@ function configureplus_status
         tree $CONFIGUREPLUS_DIR_OUT/
 
     fi
+
+    echo "// LOCAL"
+
+    if [[ -d $CONFIGUREPLUS_DIR_OUT/ ]]; then
+	find $CONFIGUREPLUS_DIR_OUT/global/* $CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/* | perl -MPath::Class -ne 'chomp; $f=file($_); chomp($fs=$f->slurp); printf qq[%s = %s\n], $f, $fs;'
+    fi
+    
 }
 
 function configureplus_set
