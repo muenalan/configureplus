@@ -158,7 +158,7 @@ function configureplus_status
     echo ""
     echo "// VALUES"
 
-    find .configureplus/global/* .configureplus/session/linux-gnu/* -type f | perl -MPath::Class -MData::Dump=pp -ne 'chomp; $f=file($_); chomp( $val=$f->slurp ); $href->{ $f->basename }->{ /global/ ? "global" : "session" } = $val; END { printf "%-40s %-40s %-40s\n", qw(VARIABLE GLOBAL SESSION); for(sort keys %$href) { printf "%-40s %-40s %-40s\n", $_, $href->{$_}->{global}, $href->{$_}->{session} } }'
+    find $CONFIGUREPLUS_DIR_OUT/global/* $CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/* -type f | perl -MPath::Class -MData::Dump=pp -ne 'chomp; $f=file($_); chomp( $val=$f->slurp ); $href->{ $f->basename }->{ /global/ ? "global" : "session" } = $val; END { printf "%-40s %-40s %-40s\n", qw(VARIABLE GLOBAL SESSION); for(sort keys %$href) { printf "%-40s %-40s %-40s\n", $_, $href->{$_}->{global}, $href->{$_}->{session} } }'
     
 
 }
