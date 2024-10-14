@@ -22,7 +22,7 @@
 #==============================================================================
 
 # Script version
-CONFIGUREPLUS_VERSION=0.14.2
+CONFIGUREPLUS_VERSION=0.14.5
 
 # Set script name
 SCRIPT_NAME=$(basename "$0")
@@ -128,12 +128,39 @@ function configureplus_status
 
     fi
 
-    echo "// LOCAL"
+    if [[ ! "$CONFIGUREPLUS_DIR_OUT_SESSIONS" ]]; then
 
-    if [[ -d $CONFIGUREPLUS_DIR_OUT/ ]]; then
-	find $CONFIGUREPLUS_DIR_OUT/global/* $CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/* | perl -MPath::Class -ne 'chomp; $f=file($_); chomp($fs=$f->slurp); printf qq[%s = %s\n], $f, $fs;'
+	warn_local "CONFIGUREPLUS_DIR_OUT_SESSIONS=$CONFIGUREPLUS_DIR_OUT_SESSIONS is empty"
+
+	return;
+    fi
+
+    configureplus_session_identify
+    
+    if [[ ! "$CONFIGUREPLUS_SESSION" ]]; then
+
+	warn_local "CONFIGUREPLUS_SESSION=$CONFIGUREPLUS_SESSION is empty"
+
+	return;
+    fi
+
+    echo ""
+    echo "// GLOBAL, LOCAL"
+
+    if [[ -d $CONFIGUREPLUS_DIR_OUT/global ]]; then
+	find $CONFIGUREPLUS_DIR_OUT/global/* | perl -MPath::Class -ne 'chomp; $f=file($_); chomp($fs=$f->slurp); printf qq[%s = %s\n], $f, $fs;'
     fi
     
+    if [[ -d $CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION ]]; then
+	find $CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/* | perl -MPath::Class -ne 'chomp; $f=file($_); chomp($fs=$f->slurp); printf qq[%s = %s\n], $f, $fs;'
+    fi
+
+    echo ""
+    echo "// VALUES"
+
+    find .configureplus/global/* .configureplus/session/linux-gnu/* -type f | perl -MPath::Class -MData::Dump=pp -ne 'chomp; $f=file($_); chomp( $val=$f->slurp ); $href->{ $f->basename }->{ /global/ ? "global" : "session" } = $val; END { printf "%-40s %-40s %-40s\n", qw(VARIABLE GLOBAL SESSION); for(sort keys %$href) { printf "%-40s %-40s %-40s\n", $_, $href->{$_}->{global}, $href->{$_}->{session} } }'
+    
+
 }
 
 function configureplus_set
@@ -1373,8 +1400,9 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
             ;;
         status)
             # Your existing status command logic
-            configureplus_setup
+            #configureplus_setup
             configureplus_status
+	    exit 0
             ;;
         list)
             # Your existing list command logic
