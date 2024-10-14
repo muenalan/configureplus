@@ -1361,7 +1361,7 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
             configureplus_generate
             ;;
         version)
-            echo $CONFIGUREPLUS_VERSION
+            echo CONFIGUREPLUS_VERSION=$CONFIGUREPLUS_VERSION
             exit 0
             ;;
         readme)
