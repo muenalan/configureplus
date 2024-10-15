@@ -167,7 +167,7 @@ function configureplus_status
     echo ""
     echo "// VALUES"
 
-    find $FOLDERS -type f -mindepth 1 | 
+    find $FOLDERS -mindepth 1 -type f | 
          /usr/bin/perl -MPath::Class -MData::Dump=pp -ne '
 
          chomp; 
