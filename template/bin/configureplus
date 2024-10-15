@@ -22,7 +22,7 @@
 #==============================================================================
 
 # Script version
-CONFIGUREPLUS_VERSION=0.14.5
+CONFIGUREPLUS_VERSION=0.14.7
 
 # Set script name
 SCRIPT_NAME=$(basename "$0")
@@ -179,15 +179,21 @@ function configureplus_set
     
     FNAME=$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/$1
 
+    warn_local "configureplus_set : CONFIGUREPLUS_OPTION_FLAG_GLOBAL=$CONFIGUREPLUS_OPTION_FLAG_GLOBAL"
+    
     if [ "$CONFIGUREPLUS_OPTION_FLAG_GLOBAL" = true ]; then
+
+	warn_local "configureplus_set : \$CONFIGUREPLUS_OPTION_FLAG_GLOBAL is true; setting FNAME to global var.."
 
         FNAME=~/.config/$SCRIPT_NAME/$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/$1
 
     fi
 
+    warn_local "configureplus_set : decided on FNAME=$FNAME"
+
     shift
     
-    echo_local Setting $FNAME to value \"$2\" "(all values \"$*\")"
+    echo_local Setting $FNAME to value \"$1\" "(all values \"$*\")"
 
     >$FNAME echo $*
 }
@@ -198,9 +204,13 @@ function configureplus_get
 
     if [ -f $CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/$1 ] && [ ! "$CONFIGUREPLUS_OPTION_FLAG_GLOBAL" = true ]; then
         
+	warn_local "\$CONFIGUREPLUS_OPTION_FLAG_GLOBAL=$CONFIGUREPLUS_OPTION_FLAG_GLOBAL .. is not true"
+
         FNAME=$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/$1
     
     else
+
+	warn_local "\$CONFIGUREPLUS_OPTION_FLAG_GLOBAL=$CONFIGUREPLUS_OPTION_FLAG_GLOBAL .. is true"
 
         FNAME=$CONFIGUREPLUS_DIR_CONFIG/$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/$1
 
