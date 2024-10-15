@@ -82,16 +82,14 @@ fi
 
 function echo_local
 {
+   if [ "$CONFIGUREPLUS_DEBUG" -ge "1" ]; then
        >&2 echo "[INFO stdout, $CONFIGUREPLUS_ZERO_ARG_BASENAME] : {" $@ "}"
+   fi
 }
 
 function warn_local
 {
-   if [ "$CONFIGUREPLUS_DEBUG" -ge "1" ]; then
-
-       >&2 echo "[WARN stdout, $CONFIGUREPLUS_ZERO_ARG_BASENAME] : {" $@ "}"
-
-   fi
+    >&2 echo "[WARN stdout, $CONFIGUREPLUS_ZERO_ARG_BASENAME] : {" $@ "}"
 }
 
 function echo_local_level
