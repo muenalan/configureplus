@@ -22,7 +22,7 @@
 #==============================================================================
 
 # Script version
-CONFIGUREPLUS_VERSION=0.14.9
+CONFIGUREPLUS_VERSION=0.15.1
 
 # Set script name
 SCRIPT_NAME=$(basename "$0")
@@ -36,6 +36,7 @@ CONFIGUREPLUS_DIR_OUT_SESSIONS=$CONFIGUREPLUS_DIR_OUT/session
 CONFIGUREPLUS_ZERO_ARG_BASENAME=$(basename $0)
 CONFIGUREPLUS_DIR_CONFIG=~/.config/$SCRIPT_NAME
 
+CONFIGUREPLUS_OPTION_FLAG_HOME=false
 CONFIGUREPLUS_OPTION_FLAG_GLOBAL=false
 CONFIGUREPLUS_OPTION_FLAG_DETECT_OS=false
 
@@ -59,7 +60,8 @@ function configureplus_help_show
     echo
     echo "Options:"
     echo "  --verbose           Print more information"
-    echo "  --global            Operate on global configuration"
+    echo "  --home              Operate on home configuration"
+    echo "  --global            Operate on global configuration (can be combined with --home)"
     echo "  --detect-os         Detect and save ostype"
     echo
     echo "For more information, use '$SCRIPT_NAME help <command>'"
@@ -168,7 +170,7 @@ function configureplus_status
     echo "// VALUES"
 
     find $FOLDERS -mindepth 1 -type f | 
-         /usr/bin/perl -MPath::Class -MData::Dump=pp -ne '
+         CONFIGUREPLUS_SESSION=$CONFIGUREPLUS_SESSION /usr/bin/perl -MPath::Class -MData::Dump=pp -ne '
 
          chomp; 
 
@@ -216,7 +218,7 @@ function configureplus_status
          { 
             @k = qw(HOME-GLOBAL HOME-SESSION LOCAL-GLOBAL LOCAL-SESSION);
 
-            printf "$field_fmt %s\n", "VARNAME", join( " ", map { sprintf "$field_fmt", $_||"<empty>" } @k ), "\n";
+            printf "$field_fmt %s\n", "VARNAME", join( " ", map { $_="$_ ($ENV{CONFIGUREPLUS_SESSION})" if /SESSION/; sprintf "$field_fmt", $_||"<empty>" } @k ), "\n";
  
             for my $varname (sort keys %$href) 
             { 
@@ -228,6 +230,35 @@ function configureplus_status
          '
     
 
+}
+
+function configureplus_fname
+{
+    warn_local "configureplus_fname : \$1 = $1"
+
+    local FNAME_PRE=$CONFIGUREPLUS_DIR_OUT
+
+    local FNAME_POST=session/$CONFIGUREPLUS_SESSION/$1
+
+    
+    if [ "$CONFIGUREPLUS_OPTION_FLAG_HOME" = true ]; then
+
+	warn_local "configureplus_fname : \$CONFIGUREPLUS_OPTION_FLAG_HOME is true; setting FNAME to home-global var.."
+
+	FNAME_PRE=~/.config/$SCRIPT_NAME/$CONFIGUREPLUS_DIR_OUT
+
+    fi
+
+    if [ "$CONFIGUREPLUS_OPTION_FLAG_GLOBAL" = true ]; then
+
+	warn_local "configureplus_fname : \$CONFIGUREPLUS_OPTION_FLAG_GLOBAL is true; setting FNAME to global var.."
+
+	FNAME_POST=global/$1
+
+
+    fi
+
+    echo $FNAME_PRE/$FNAME_POST
 }
 
 function configureplus_set
@@ -243,18 +274,8 @@ function configureplus_set
         echo_local "ARGUMENT_MISSING at pos 2: configureplus_set requires value argument."
 
     fi
-    
-    FNAME=$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/$1
 
-    warn_local "configureplus_set : CONFIGUREPLUS_OPTION_FLAG_GLOBAL=$CONFIGUREPLUS_OPTION_FLAG_GLOBAL"
-    
-    if [ "$CONFIGUREPLUS_OPTION_FLAG_GLOBAL" = true ]; then
-
-	warn_local "configureplus_set : \$CONFIGUREPLUS_OPTION_FLAG_GLOBAL is true; setting FNAME to global var.."
-
-        FNAME=~/.config/$SCRIPT_NAME/$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/$1
-
-    fi
+    local FNAME=$(configureplus_fname $1)
 
     warn_local "configureplus_set : decided on FNAME=$FNAME"
 
@@ -269,28 +290,7 @@ function configureplus_get
 {
     echo_local Getting $CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/$1
 
-    if [ -f $CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/$1 ] && [ ! "$CONFIGUREPLUS_OPTION_FLAG_GLOBAL" = true ]; then
-        
-	warn_local "\$CONFIGUREPLUS_OPTION_FLAG_GLOBAL=$CONFIGUREPLUS_OPTION_FLAG_GLOBAL .. is not true"
-
-        FNAME=$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/$1
-    
-    else
-
-	warn_local "\$CONFIGUREPLUS_OPTION_FLAG_GLOBAL=$CONFIGUREPLUS_OPTION_FLAG_GLOBAL .. is true"
-
-        FNAME=$CONFIGUREPLUS_DIR_CONFIG/$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/$1
-
-        if [ ! -f $FNAME ]; then
-
-            warn_local the global path $FNAME was not available. Now try to global/
-
-            FNAME=$CONFIGUREPLUS_DIR_CONFIG/$CONFIGUREPLUS_DIR_OUT/global/$1
-
-            warn_local Now looking for FNAME=$FNAME
-
-        fi
-    fi
+    local FNAME=$(configureplus_fname $1)
 
     echo_local cat $FNAME
 
@@ -361,12 +361,14 @@ function configureplus_help
             echo "Sets a variable for the current session or globally."
             echo "  <varname>: The name of the variable to set"
             echo "  <value>: The value to assign to the variable"
+            echo "  [--home]: Optional. If specified, sets the variable from home (~/.config/configureplus)"
             echo "  [--global]: Optional. If specified, sets the variable globally"
             ;;
         get)
             echo "Usage: configureplus get <varname>"
             echo "Gets the value of a variable from the current session or globally."
             echo "  <varname>: The name of the variable to get"
+            echo "  [--home]: Optional. If specified, gets the global variable from home (~/.config/configureplus)"
             echo "  [--global]: Optional. If specified, gets the global variable"
             ;;
         status)
@@ -1351,7 +1353,7 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
     # separate word. The quotes around `$@' are essential!
     # We need TEMP as the `eval set --' would nuke the return value of getopt.
 
-    GETOPT_RESULTS=`getopt -o dgon:c:: --long debug,global,detect-os,name:,c-long:: -n $SCRIPT_NAME -- "$@"`
+    GETOPT_RESULTS=`getopt -o dhgon:c:: --long debug,home,global,detect-os,name:,c-long:: -n $SCRIPT_NAME -- "$@"`
 
     if [ $? != 0 ] ; then
         
@@ -1372,6 +1374,11 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
 	        warn_local "Option d" 
                 CONFIGUREPLUS_DEBUG=$0
 	        shift 
+	        ;;
+            -h|--home) 
+	        warn_local "Option h"
+	        shift 
+                CONFIGUREPLUS_OPTION_FLAG_HOME=true
 	        ;;
             -g|--global) 
 	        warn_local "Option g"
