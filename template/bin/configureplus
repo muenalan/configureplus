@@ -1433,7 +1433,7 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
 
 
 
-    echo CONFIGUREPLUS_DEBUG=$CONFIGUREPLUS_DEBUG
+    warn_local CONFIGUREPLUS_DEBUG=$CONFIGUREPLUS_DEBUG
 
 
     # Default command is now 'generate'
