@@ -286,6 +286,72 @@ function configureplus_set
     >$FNAME echo $*
 }
 
+function configureplus_add
+{
+    if [ -z "$1" ]; then
+
+        echo_local "ARGUMENT_MISSING at pos 1: configureplus_add requires key argument."
+
+    fi
+    
+    if [ -z "$2" ]; then
+
+        echo_local "ARGUMENT_MISSING at pos 2: configureplus_add requires value argument."
+
+    fi
+
+    local FNAME=$(configureplus_fname $1)
+
+    warn_local "configureplus_add : decided on FNAME=$FNAME"
+
+    shift
+
+    local OLD_VALUE=`cat $FNAME`
+    
+    echo_local Adding to $FNAME value \"$1\" "(all values \"$*\")"
+
+    >$FNAME echo "$OLD_VALUE:$*"
+}
+
+function configureplus_remove
+{
+    if [ -z "$1" ]; then
+
+        echo_local "ARGUMENT_MISSING at pos 1: configureplus_remove requires key argument."
+
+    fi
+    
+    if [ -z "$2" ]; then
+
+        echo_local "ARGUMENT_MISSING at pos 2: configureplus_remove requires value argument."
+
+    fi
+
+    local FNAME=$(configureplus_fname $1)
+
+    warn_local "configureplus_remove : decided on FNAME=$FNAME"
+
+    shift
+
+    local OLD_VALUE=`cat $FNAME`
+
+    local NEW_VALUE=$(OLD_VALUE="$OLD_VALUE" REMOVE_VALUE="$1" /usr/bin/perl -e '
+
+      use Env qw(@OLD_VALUE $REMOVE_VALUE); 
+
+      @new_value= grep( !/^$REMOVE_VALUE$/, @OLD_VALUE ); 
+
+      print join( ":", @new_value); 
+      '
+    )
+
+    warn_local NEW_VALUE="$NEW_VALUE"
+    
+    echo_local Removing from $FNAME value \"$1\" "(all values \"$*\")"
+
+    >$FNAME echo "$NEW_VALUE"
+}
+
 function configureplus_get
 {
     echo_local Getting $CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/$1
@@ -1481,6 +1547,16 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
             # Your existing get command logic
             configureplus_setup
             configureplus_get $2 $3
+            ;;
+        add)
+            # Your existing set command logic
+            configureplus_setup
+            configureplus_add $2 $3 $4
+            ;;
+        remove)
+            # Your existing get command logic
+            configureplus_setup
+            configureplus_remove $2 $3
             ;;
         status)
             # Your existing status command logic
