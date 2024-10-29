@@ -22,7 +22,7 @@
 #==============================================================================
 
 # Script version
-CONFIGUREPLUS_VERSION=0.15.1
+CONFIGUREPLUS_VERSION=0.15.2
 
 # Set script name
 SCRIPT_NAME=$(basename "$0")
@@ -1211,6 +1211,8 @@ function configureplus_generate_configure_global_json
 
     echo >>$CONFIGUREPLUS_DIR_OUT/global.json
 
+    echo "  {" >>$CONFIGUREPLUS_DIR_OUT/global.json
+
 
     local ARRAY=($CONFIGUREPLUS_DIR_OUT/global/*)
 
@@ -1237,6 +1239,8 @@ function configureplus_generate_configure_global_json
 	let CNT=$CNT+1
         
     done
+
+    echo "  }" >>$CONFIGUREPLUS_DIR_OUT/global.json
 
     echo >>$CONFIGUREPLUS_DIR_OUT/global.json
 
@@ -1317,6 +1321,8 @@ function configureplus_generate_configure_session_json
 
     echo >>$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION.json
 
+    echo "  {" >>$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION.json
+
     local ARRAY=($(echo $CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/*|sort))
 
     local ARRAY_LEN=${#ARRAY[@]}
@@ -1346,6 +1352,8 @@ function configureplus_generate_configure_session_json
     done
 
     echo >>$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION.json
+
+    echo "  }" >>$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION.json
 
     echo "]" >>$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION.json
 

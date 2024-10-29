@@ -1,5 +1,5 @@
 
-# Generated with configureplus (CONFIGUREPLUS_VERSION=0.15.1, CONFIGUREPLUS_PWD=/home/muenalan/git-workdirs/configureplus/build/platforms/linux-gnu)
+# Generated with configureplus (CONFIGUREPLUS_VERSION=0.15.2, CONFIGUREPLUS_PWD=/home/muenalan/git-workdirs/configureplus/build/platforms/linux-gnu)
 
 export CONFIGUREPLUS_SESSION='linux-gnu'
 export CONFIGURE_DIR_OUTPUT='platforms'
