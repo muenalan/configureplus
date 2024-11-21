@@ -22,7 +22,7 @@
 #==============================================================================
 
 # Script version
-CONFIGUREPLUS_VERSION=0.15.2
+CONFIGUREPLUS_VERSION=0.16.0
 
 # Set script name
 SCRIPT_NAME=$(basename "$0")
@@ -117,6 +117,33 @@ function configureplus_env
 
     warn_local "Note: Your local shell variables are not shown. Rerun: '$ set|grep CONFIGURE' if needed." 
 }
+
+function configureplus_bootstrap
+{
+    echo_local_level 2 configureplus_bootstrap - CONFIGUREPLUS_DEBUG=$CONFIGUREPLUS_DEBUG 
+
+    echo_local_level 2 configureplus_bootstrap - Checking ~/.config/$SCRIPT_NAME/$CONFIGUREPLUS_DIR_OUT/
+
+
+    echo_local_level 2 configureplus_bootstrap - configureplus_dir_config_setup
+    
+    configureplus_dir_config_setup
+
+    echo_local_level 2 configureplus_bootstrap - configureplus_session_identify ..
+
+    configureplus_session_identify
+
+    echo_local_level 2 configureplus_bootstrap - configureplus_session_directory_setup ..
+
+    configureplus_session_directory_setup
+
+
+    echo_local_level 2 configureplus_bootstrap - configureplus_globalvars_setup ..
+
+    configureplus_globalvars_setup
+
+}
+
 
 function configureplus_status
 {
@@ -422,6 +449,13 @@ function configureplus_help
             echo "   --f|force           Force overwriting {planned}"
             echo "   --d|dryrun          Dryrun            {planned}"
             ;;
+        bootstrap)
+            echo "Usage: configureplus bootstrap"
+            echo "Prepare everything for the baselines. Default folder: .configureplus. If --global is active, ~/.config/$SCRIPT_NAME/.$SCRIPT_NAME"
+            echo "  Options:"
+            echo "   --f|force           Force overwriting {planned}"
+            echo "   --d|dryrun          Dryrun            {planned}"
+            ;;
         set)
             echo "Usage: configureplus set <varname> <value>"
             echo "Sets a variable for the current session or globally."
@@ -717,7 +751,7 @@ There are two alternative installation options. Per default, the program is unpa
 
 # SYNOPSIS (darwin19)
 
-    # Warn, because .configureplus/session/darwin19/CONFIGUREPLUS_SESSION is not set
+    # Warn, because .configureplus/session/darwin19/CONFIGUREPLUS/SESSION is not set
     
     $ configureplus
     [WARN stdout, configureplus] : { ERROR_NOT_SET_CONFIGUREPLUS_SESSION }
@@ -725,23 +759,23 @@ There are two alternative installation options. Per default, the program is unpa
     [WARN stdout, configureplus] : { Retry configureplus again. }    
 
     $ configureplus
-    [WARN stdout, configureplus] : { Loading .configureplus/global/CONFIGUREPLUS_SESSION=darwin19 }
-- .configureplus/session/darwin19/CONFIGUREPLUS_DIR_CONFIG = /Users/muenalan/.config/configureplus
-- .configureplus/session/darwin19/CONFIGUREPLUS_DIR_OUT = .configureplus
-- .configureplus/session/darwin19/CONFIGUREPLUS_DIR_OUT_SESSIONS = .configureplus/session
-- .configureplus/session/darwin19/CONFIGUREPLUS_PWD = /Users/muenalan/git-workdirs/github.com/muenalan/bash/configureplus
-- .configureplus/session/darwin19/CONFIGUREPLUS_SESSION = 'darwin19' [session-id (such as $OSTYPE)]
-- .configureplus/session/darwin19/CONFIGUREPLUS_VERSION = 0.1
-- .configureplus/session/darwin19/CONFIGURE_BASH_PROFILE_FILE = /Users/muenalan/.bash_profile
-- .configureplus/session/darwin19/CONFIGURE_DIR_OUTPUT = 'platforms' [folder for general and os-specific files (merged with CONFIG_DIR_TEMPLATE)]
-- .configureplus/session/darwin19/CONFIGURE_DIR_TEMPLATE = 'template' [folder for os-specific files and template files merged]
-- .configureplus/session/darwin19/CONFIGURE_FLAG_TOOL_BTEST = '' [btest *testing* tool path]
-- .configureplus/session/darwin19/CONFIGURE_GIT_TAG = v0.0.1
-- .configureplus/session/darwin19/CONFIGURE_MKTEMP = '/var/folders/px/ctnmlq5n5gbf154mj25wzdxh0000gn/T/tmp.FU7FWYDy' [make session temp dir]
-- .configureplus/session/darwin19/CONFIGURE_OSTYPE = 'darwin19' [current os identifier]
-- .configureplus/session/darwin19/CONFIGURE_PKGNAME = 'configureplus' [distribution package name]
-- .configureplus/session/darwin19/CONFIGURE_TIMESTAMP = Mon May 22 11:41:16 CEST 2023
-- .configureplus/session/darwin19/CONFIGURE_VERSION = '0.0.1'  [distribution version]
+    [WARN stdout, configureplus] : { Loading .configureplus/global/CONFIGUREPLUS/SESSION=darwin19 }
+- .configureplus/session/darwin19/CONFIGUREPLUS/DIR_CONFIG = /Users/muenalan/.config/configureplus
+- .configureplus/session/darwin19/CONFIGUREPLUS/DIR_OUT = .configureplus
+- .configureplus/session/darwin19/CONFIGUREPLUS/DIR_OUT_SESSIONS = .configureplus/session
+- .configureplus/session/darwin19/CONFIGUREPLUS/PWD = /Users/muenalan/git-workdirs/github.com/muenalan/bash/configureplus
+- .configureplus/session/darwin19/CONFIGUREPLUS/SESSION = 'darwin19' [session-id (such as $OSTYPE)]
+- .configureplus/session/darwin19/CONFIGUREPLUS/VERSION = 0.1
+- .configureplus/session/darwin19/CONFIGURE/BASH_PROFILE_FILE = /Users/muenalan/.bash_profile
+- .configureplus/session/darwin19/CONFIGURE/DIR_OUTPUT = 'platforms' [folder for general and os-specific files (merged with CONFIG_DIR_TEMPLATE)]
+- .configureplus/session/darwin19/CONFIGURE/DIR_TEMPLATE = 'template' [folder for os-specific files and template files merged]
+- .configureplus/session/darwin19/CONFIGURE/FLAG_TOOL_BTEST = '' [btest *testing* tool path]
+- .configureplus/session/darwin19/CONFIGURE/GIT_TAG = v0.0.1
+- .configureplus/session/darwin19/CONFIGURE/MKTEMP = '/var/folders/px/ctnmlq5n5gbf154mj25wzdxh0000gn/T/tmp.FU7FWYDy' [make session temp dir]
+- .configureplus/session/darwin19/CONFIGURE/OSTYPE = 'darwin19' [current os identifier]
+- .configureplus/session/darwin19/CONFIGURE/PKGNAME = 'configureplus' [distribution package name]
+- .configureplus/session/darwin19/CONFIGURE/TIMESTAMP = Mon May 22 11:41:16 CEST 2023
+- .configureplus/session/darwin19/CONFIGURE/VERSION = '0.0.1'  [distribution version]
     INFO: .configureplus/global.mk generated
     INFO: .configureplus/global.bash generated
     INFO: .configureplus/global.bash_local generated
@@ -751,21 +785,21 @@ There are two alternative installation options. Per default, the program is unpa
 
     $ configureplus
     Configuring (darwin19) ...
-- .configureplus/session/darwin19/CONFIGUREPLUS_DIR_CONFIG = /Users/muenalan/.config/configureplus
-- .configureplus/session/darwin19/CONFIGUREPLUS_DIR_OUT = .configureplus
-- .configureplus/session/darwin19/CONFIGUREPLUS_DIR_OUT_SESSIONS = .configureplus/session
-- .configureplus/session/darwin19/CONFIGUREPLUS_PWD = /Users/muenalan/git-workdirs/github.com/muenalan/bash/configureplus
-- .configureplus/session/darwin19/CONFIGUREPLUS_SESSION = darwin19
-- .configureplus/session/darwin19/CONFIGUREPLUS_VERSION = 0.1
-- .configureplus/session/darwin19/CONFIGURE_BASH_PROFILE_FILE = /Users/muenalan/.bash_profile
-- .configureplus/session/darwin19/CONFIGURE_DIR_OUTPUT = 'platforms' [folder for general and os-specific files (merged with CONFIG_DIR_TEMPLATE)]
-- .configureplus/session/darwin19/CONFIGURE_DIR_TEMPLATE = 'template' [folder for os-specific files and template files merged]
-- .configureplus/session/darwin19/CONFIGURE_FLAG_TOOL_BTEST = '' [btest *testing* tool path]
-- .configureplus/session/darwin19/CONFIGURE_MKTEMP = '/var/folders/px/ctnmlq5n5gbf154mj25wzdxh0000gn/T/tmp.2i0aHmR6' [make session temp dir]
-- .configureplus/session/darwin19/CONFIGURE_OSTYPE = 'darwin19' [current os identifier]
-- .configureplus/session/darwin19/CONFIGURE_PKGNAME = 'configureplus' [distribution package name]
-- .configureplus/session/darwin19/CONFIGURE_TIMESTAMP = Thu May 18 16:54:08 CEST 2023
-- .configureplus/session/darwin19/CONFIGURE_VERSION = '0.1'    [distribution version]
+- .configureplus/session/darwin19/CONFIGUREPLUS/DIR_CONFIG = /Users/muenalan/.config/configureplus
+- .configureplus/session/darwin19/CONFIGUREPLUS/DIR_OUT = .configureplus
+- .configureplus/session/darwin19/CONFIGUREPLUS/DIR_OUT_SESSIONS = .configureplus/session
+- .configureplus/session/darwin19/CONFIGUREPLUS/PWD = /Users/muenalan/git-workdirs/github.com/muenalan/bash/configureplus
+- .configureplus/session/darwin19/CONFIGUREPLUS/SESSION = darwin19
+- .configureplus/session/darwin19/CONFIGUREPLUS/VERSION = 0.1
+- .configureplus/session/darwin19/CONFIGURE/BASH_PROFILE_FILE = /Users/muenalan/.bash_profile
+- .configureplus/session/darwin19/CONFIGURE/DIR_OUTPUT = 'platforms' [folder for general and os-specific files (merged with CONFIG_DIR_TEMPLATE)]
+- .configureplus/session/darwin19/CONFIGURE/DIR_TEMPLATE = 'template' [folder for os-specific files and template files merged]
+- .configureplus/session/darwin19/CONFIGURE/FLAG_TOOL_BTEST = '' [btest *testing* tool path]
+- .configureplus/session/darwin19/CONFIGURE/MKTEMP = '/var/folders/px/ctnmlq5n5gbf154mj25wzdxh0000gn/T/tmp.2i0aHmR6' [make session temp dir]
+- .configureplus/session/darwin19/CONFIGURE/OSTYPE = 'darwin19' [current os identifier]
+- .configureplus/session/darwin19/CONFIGURE/PKGNAME = 'configureplus' [distribution package name]
+- .configureplus/session/darwin19/CONFIGURE/TIMESTAMP = Thu May 18 16:54:08 CEST 2023
+- .configureplus/session/darwin19/CONFIGURE/VERSION = '0.1'    [distribution version]
 - INFO: .configureplus/global.mk generated
 - INFO: .configureplus/global.bash generated
 - INFO: .configureplus/global.bash_local generated
@@ -776,12 +810,12 @@ There are two alternative installation options. Per default, the program is unpa
     $ echo value2 .configureplus/global/var2
     $ echo value3 .configureplus/global/var3
     $ cat .configureplus/dynamic.bash
-      >$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/CONFIGURE_BASH_PROFILE_FILE echo $HOME/.bash_profile
-      >$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/CONFIGUREPLUS_DIR_CONFIG    echo $HOME/.config/$CONFIGURE_PKG
-      >$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/CONFIGURE_OSTYPE            echo $OSTYPE 
-      >$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/CONFIGURE_MKTEMP            echo `mktemp -d` 
-      >$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/CONFIGURE_FLAG_TOOL_BTEST   which btest
-      >$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/CONFIGURE_TIMESTAMP         date
+      >$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/CONFIGURE/BASH_PROFILE_FILE echo $HOME/.bash_profile
+      >$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/CONFIGUREPLUS/DIR_CONFIG    echo $HOME/.config/$CONFIGURE_PKG
+      >$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/CONFIGURE/OSTYPE            echo $OSTYPE 
+      >$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/CONFIGURE/MKTEMP            echo `mktemp -d` 
+      >$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/CONFIGURE/FLAG_TOOL_BTEST   which btest
+      >$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/CONFIGURE/TIMESTAMP         date
   
 # INPUT .configureplus
 Files are used to configure the configuration variables.
@@ -805,15 +839,15 @@ Files are used to configure the configuration variables.
 ## .configureplus/**doc**/varname
 Each file contains annotation for a single variable. These can be global, or dynamically declared.
 
-- .configureplus/**doc**/CONFIGUREPLUS_SESSIONS
-- .configureplus/**doc**/CONFIGURE_MKTEMP
-- .configureplus/**doc**/CONFIGURE_DIR_OUTPUT_SESSIONS
-- .configureplus/**doc**/CONFIGURE_DIR_OUTPUT
-- .configureplus/**doc**/CONFIGURE_FLAG_TOOL_BTEST
-- .configureplus/**doc**/CONFIGURE_OSTYPE
-- .configureplus/**doc**/CONFIGURE_PKGNAME
-- .configureplus/**doc**/CONFIGURE_DIR_TEMPLATE
-- .configureplus/**doc**/CONFIGURE_VERSION
+- .configureplus/**doc**/CONFIGUREPLUS/SESSIONS
+- .configureplus/**doc**/CONFIGURE/MKTEMP
+- .configureplus/**doc**/CONFIGURE/DIR_OUTPUT_SESSIONS
+- .configureplus/**doc**/CONFIGURE/DIR_OUTPUT
+- .configureplus/**doc**/CONFIGURE/FLAG_TOOL_BTEST
+- .configureplus/**doc**/CONFIGURE/OSTYPE
+- .configureplus/**doc**/CONFIGURE/PKGNAME
+- .configureplus/**doc**/CONFIGURE/DIR_TEMPLATE
+- .configureplus/**doc**/CONFIGURE/VERSION
 
 
 # EXAMPLE
@@ -822,41 +856,41 @@ Each file contains annotation for a single variable. These can be global, or dyn
 - .configureplus/Makefile
 - .configureplus/**dynamic.bash**
 - .configureplus/**global**
-- .configureplus/**global**/CONFIGUREPLUS_SESSION                         # variable
-- .configureplus/**global**/CONFIGURE_DIR_OUTPUT                          # variable
-- .configureplus/**global**/CONFIGURE_PKGNAME                             # variable
-- .configureplus/**global**/CONFIGURE_DIR_TEMPLATE                        # variable
-- .configureplus/**global**/CONFIGURE_VERSION                             # variable
+- .configureplus/**global**/CONFIGUREPLUS/SESSION                         # variable
+- .configureplus/**global**/CONFIGURE/DIR_OUTPUT                          # variable
+- .configureplus/**global**/CONFIGURE/PKGNAME                             # variable
+- .configureplus/**global**/CONFIGURE/DIR_TEMPLATE                        # variable
+- .configureplus/**global**/CONFIGURE/VERSION                             # variable
 - .configureplus/**global.bash_local**
 - .configureplus/**global.bash**
 - .configureplus/**global.mk**
 - .configureplus/**doc**
-- .configureplus/**doc**/CONFIGUREPLUS_SESSIONS
-- .configureplus/**doc**/CONFIGURE_MKTEMP
-- .configureplus/**doc**/CONFIGURE_DIR_OUTPUT_SESSIONS
-- .configureplus/**doc**/CONFIGURE_DIR_OUTPUT
-- .configureplus/**doc**/CONFIGURE_FLAG_TOOL_BTEST
-- .configureplus/**doc**/CONFIGURE_OSTYPE
-- .configureplus/**doc**/CONFIGURE_PKGNAME
-- .configureplus/**doc**/CONFIGURE_DIR_TEMPLATE
-- .configureplus/**doc**/CONFIGURE_VERSION
+- .configureplus/**doc**/CONFIGUREPLUS/SESSIONS
+- .configureplus/**doc**/CONFIGURE/MKTEMP
+- .configureplus/**doc**/CONFIGURE/DIR_OUTPUT_SESSIONS
+- .configureplus/**doc**/CONFIGURE/DIR_OUTPUT
+- .configureplus/**doc**/CONFIGURE/FLAG_TOOL_BTEST
+- .configureplus/**doc**/CONFIGURE/OSTYPE
+- .configureplus/**doc**/CONFIGURE/PKGNAME
+- .configureplus/**doc**/CONFIGURE/DIR_TEMPLATE
+- .configureplus/**doc**/CONFIGURE/VERSION
 - .configureplus/**session**
 - .configureplus/**session**/darwin19
-- .configureplus/**session**/darwin19/CONFIGUREPLUS_DIR_OUT               # variable
-- .configureplus/**session**/darwin19/CONFIGUREPLUS_SESSION               # variable
-- .configureplus/**session**/darwin19/CONFIGUREPLUS_PWD                   # variable
-- .configureplus/**session**/darwin19/CONFIGUREPLUS_DIR_CONFIG            # variable
-- .configureplus/**session**/darwin19/CONFIGUREPLUS_VERSION               # variable
-- .configureplus/**session**/darwin19/CONFIGUREPLUS_DIR_OUT_SESSIONS      # variable
-- .configureplus/**session**/darwin19/CONFIGURE_MKTEMP                    # variable
-- .configureplus/**session**/darwin19/CONFIGURE_TIMESTAMP                 # variable
-- .configureplus/**session**/darwin19/CONFIGURE_DIR_OUTPUT                # variable
-- .configureplus/**session**/darwin19/CONFIGURE_FLAG_TOOL_BTEST           # variable
-- .configureplus/**session**/darwin19/CONFIGURE_OSTYPE                    # variable
-- .configureplus/**session**/darwin19/CONFIGURE_PKGNAME                   # variable
-- .configureplus/**session**/darwin19/CONFIGURE_DIR_TEMPLATE              # variable
-- .configureplus/**session**/darwin19/CONFIGURE_BASH_PROFILE_FILE         # variable
-- .configureplus/**session**/darwin19/CONFIGURE_VERSION                   # variable
+- .configureplus/**session**/darwin19/CONFIGUREPLUS/DIR_OUT               # variable
+- .configureplus/**session**/darwin19/CONFIGUREPLUS/SESSION               # variable
+- .configureplus/**session**/darwin19/CONFIGUREPLUS/PWD                   # variable
+- .configureplus/**session**/darwin19/CONFIGUREPLUS/DIR_CONFIG            # variable
+- .configureplus/**session**/darwin19/CONFIGUREPLUS/VERSION               # variable
+- .configureplus/**session**/darwin19/CONFIGUREPLUS/DIR_OUT_SESSIONS      # variable
+- .configureplus/**session**/darwin19/CONFIGURE/MKTEMP                    # variable
+- .configureplus/**session**/darwin19/CONFIGURE/TIMESTAMP                 # variable
+- .configureplus/**session**/darwin19/CONFIGURE/DIR_OUTPUT                # variable
+- .configureplus/**session**/darwin19/CONFIGURE/FLAG_TOOL_BTEST           # variable
+- .configureplus/**session**/darwin19/CONFIGURE/OSTYPE                    # variable
+- .configureplus/**session**/darwin19/CONFIGURE/PKGNAME                   # variable
+- .configureplus/**session**/darwin19/CONFIGURE/DIR_TEMPLATE              # variable
+- .configureplus/**session**/darwin19/CONFIGURE/BASH_PROFILE_FILE         # variable
+- .configureplus/**session**/darwin19/CONFIGURE/VERSION                   # variable
 - .configureplus/**session**/darwin19.bash_local
 - .configureplus/**session**/darwin19.bash
 - .configureplus/**session**/darwin19.mk
@@ -892,9 +926,11 @@ function configureplus_dir_config_setup
 
 function configureplus_session_var_update_ostype
 {
-    echo $OSTYPE >$CONFIGUREPLUS_DIR_OUT/global/CONFIGUREPLUS_SESSION
+    warn_local "--detect-os: \$OSTYPE >$CONFIGUREPLUS_DIR_OUT/global/CONFIGUREPLUS/SESSION"
 
-    warn_local "--detect-os: \$OSTYPE >$CONFIGUREPLUS_DIR_OUT/global/CONFIGUREPLUS_SESSION"
+    warn_local "echo $OSTYPE >$CONFIGUREPLUS_DIR_OUT/global/CONFIGUREPLUS/SESSION"
+
+    echo $OSTYPE >$CONFIGUREPLUS_DIR_OUT/global/CONFIGUREPLUS/SESSION
 }
 
 function configureplus_session_identify
@@ -905,11 +941,11 @@ if [[ -z "$CONFIGUREPLUS_SESSION" ]]; then
 
     echo_local CONFIGUREPLUS_SESSION not set at start.
 
-    if [ -f "$CONFIGUREPLUS_DIR_OUT/global/CONFIGUREPLUS_SESSION" ]; then
+    if [ -f "$CONFIGUREPLUS_DIR_OUT/global/CONFIGUREPLUS/SESSION" ]; then
 
-	CONFIGUREPLUS_SESSION=$(cat $CONFIGUREPLUS_DIR_OUT/global/CONFIGUREPLUS_SESSION)
+	CONFIGUREPLUS_SESSION=$(cat $CONFIGUREPLUS_DIR_OUT/global/CONFIGUREPLUS/SESSION)
 	
-	echo_local Setting to $CONFIGUREPLUS_SESSION "(from $CONFIGUREPLUS_DIR_OUT/global/CONFIGUREPLUS_SESSION)"
+	echo_local Setting to $CONFIGUREPLUS_SESSION "(from $CONFIGUREPLUS_DIR_OUT/global/CONFIGUREPLUS/SESSION)"
 	
     else
 
@@ -926,9 +962,9 @@ if [[ -z "$CONFIGUREPLUS_SESSION" ]]; then
 
         mkdir -p $CONFIGUREPLUS_DIR_OUT/global
 
-	warn_local Will invoke: echo $OSTYPE >$CONFIGUREPLUS_DIR_OUT/global/CONFIGUREPLUS_SESSION
+	warn_local Will invoke: echo $OSTYPE >$CONFIGUREPLUS_DIR_OUT/global/CONFIGUREPLUS/SESSION
 
-	echo $OSTYPE >$CONFIGUREPLUS_DIR_OUT/global/CONFIGUREPLUS_SESSION
+	echo $OSTYPE >$CONFIGUREPLUS_DIR_OUT/global/CONFIGUREPLUS/SESSION
 
 	warn_local Retry configureplus again.
 
@@ -948,39 +984,39 @@ function configureplus_session_directory_setup
 {
     echo_local_level 2 configureplus_session_directory_setup ..
 
-# $CONFIGUREPLUS_SESSION
+    # $CONFIGUREPLUS_SESSION
 
-mkdir -p $CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION
+    mkdir -p $CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION
 
-# dynamic
+    # dynamic
 
-if [ ! -f $CONFIGUREPLUS_DIR_OUT/dynamic.bash ]; then
+    if [ ! -f $CONFIGUREPLUS_DIR_OUT/dynamic.bash ]; then
 
-    warn_local Probing $CONFIGUREPLUS_DIR_CONFIG/$CONFIGUREPLUS_DIR_OUT/dynamic.bash
-    
-    if [ -f $CONFIGUREPLUS_DIR_CONFIG/$CONFIGUREPLUS_DIR_OUT/dynamic.bash ]; then
+        warn_local Probing $CONFIGUREPLUS_DIR_CONFIG/$CONFIGUREPLUS_DIR_OUT/dynamic.bash
+        
+        if [ -f $CONFIGUREPLUS_DIR_CONFIG/$CONFIGUREPLUS_DIR_OUT/dynamic.bash ]; then
 
-        warn_local cp $CONFIGUREPLUS_DIR_CONFIG/$CONFIGUREPLUS_DIR_OUT/dynamic.bash $CONFIGUREPLUS_DIR_OUT/
+            warn_local cp $CONFIGUREPLUS_DIR_CONFIG/$CONFIGUREPLUS_DIR_OUT/dynamic.bash $CONFIGUREPLUS_DIR_OUT/
 
-        cp $CONFIGUREPLUS_DIR_CONFIG/$CONFIGUREPLUS_DIR_OUT/dynamic.bash $CONFIGUREPLUS_DIR_OUT/
+            cp $CONFIGUREPLUS_DIR_CONFIG/$CONFIGUREPLUS_DIR_OUT/dynamic.bash $CONFIGUREPLUS_DIR_OUT/
 
-    else
+        else
 
-        warn_local touch $CONFIGUREPLUS_DIR_OUT/dynamic.bash
+            warn_local touch $CONFIGUREPLUS_DIR_OUT/dynamic.bash
 
-        touch $CONFIGUREPLUS_DIR_OUT/dynamic.bash
+            touch $CONFIGUREPLUS_DIR_OUT/dynamic.bash
+
+        fi
+        
 
     fi
-    
-
-fi
 
 
-if [ ! -d $CONFIGUREPLUS_DIR_OUT/global ]; then
+    if [ ! -d $CONFIGUREPLUS_DIR_OUT/global ]; then
 
-    mkdir -p $CONFIGUREPLUS_DIR_OUT/global 
+        mkdir -p $CONFIGUREPLUS_DIR_OUT/global 
 
-fi
+    fi
 
     echo_local_level 2 configureplus_session_directory_setup .. done
 
@@ -1003,39 +1039,85 @@ function configureplus_globalvars_setup
 
     # global
 
-    echo_local "configureplus_globalvars_setup .. init session vars from global (overwrite) (source=$CONFIGUREPLUS_DIR_OUT/global/)"
+    echo_local "configureplus_globalvars_setup - init session vars from global (overwrite) (source=$CONFIGUREPLUS_DIR_OUT/global/)"
 
-    for VARFILE in $CONFIGUREPLUS_DIR_OUT/global/*; do
+    FIND_DIR=$CONFIGUREPLUS_DIR_OUT/global/
 
+    echo_local
+    
+    for VARFILE in $(find $CONFIGUREPLUS_DIR_OUT/global/* -type f); do
+
+        warn_local VARFILE=$VARFILE
+        
 	BASENAME=$(basename $VARFILE)
 
-	if [ ! -f "$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/$BASENAME" ]; then
-	    
-	    warn_local .. overwriting "$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/$VARFILE"
+        VARFILE_BASE=${VARFILE#$FIND_DIR}
 
-            cp $VARFILE $CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/
-	
+        VARFILE_KEY=${VARFILE_BASE//\//_}
+
+	if [ ! -f "$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/$VARFILE_BASE" ]; then
+	    
+	    warn_local configureplus_globalvars_setup - overwriting "$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/$VARFILE_BASE"
+
+            local DIRNAME=$(dirname $CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/$VARFILE_BASE)
+
+            if [[ ! -d $DIRNAME ]]; then
+
+                mkdir -p $DIRNAME
+
+                if [[ ! -d $DIRNAME ]]; then
+
+                    echo "*FATAL*: Could not create $DIRNAME with: mkdir -p $DIRNAME" >&2
+
+                    exit 99
+                fi
+
+            fi
+            
+            warn_local cp "'$VARFILE'" "'$DIRNAME'"
+	    
+            cp "$VARFILE" "$DIRNAME"
+	    
 	fi
 
     done
 
     # std
 
-    echo_local_level 2 configureplus_globalvars_setup .. write current variable values to $CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/
+    echo_local_level 2 configureplus_globalvars_setup - write current variable values to $CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/
 
     VARS="PWD SESSION VERSION DIR_CONFIG DIR_OUT DIR_OUT_SESSIONS"
 
-    echo_local .. reset VARS=$VARS
+    echo_local configureplus_globalvars_setup - reset VARS=$VARS
 
+    local FIND_DIR=$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/
+    
     for VARNAME in $VARS; do
 
 	VARNAME_=CONFIGUREPLUS_$VARNAME
 
-	VARNAME_FULL=$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/$VARNAME_
+	VARNAME_FULL=$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/CONFIGUREPLUS/$VARNAME
+
+	echo_local configureplus_globalvars_setup - Test $VARNAME_FULL = ${!VARNAME_}
 
 	if [ ! -f "$VARNAME_FULL" ]; then
 	    
-	    echo_local .. overwrite $VARNAME_FULL = ${!VARNAME_}
+	    echo_local configureplus_globalvars_setup - overwrite $VARNAME_FULL = ${!VARNAME_}
+
+            local DIRNAME=$(dirname $VARNAME_FULL)
+
+            if [[ ! -d $DIRNAME ]]; then
+
+                mkdir -p $DIRNAME
+
+                if [[ ! -d $DIRNAME ]]; then
+
+                    echo "*FATAL*: Could not create $DIRNAME with: mkdir -p $DIRNAME" >&2
+
+                    exit 99
+                fi
+
+            fi
 
 	    >$VARNAME_FULL               echo ${!VARNAME_}
 
@@ -1043,7 +1125,7 @@ function configureplus_globalvars_setup
 	
     done
 
-    echo_local_level 2 configureplus_globalvars_setup .. done
+    echo_local_level 2 configureplus_globalvars_setup - done
 }
 
 
@@ -1055,19 +1137,26 @@ function configureplus_summary
     
     echo_local_level 2 configureplus_summary "(find $CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/*|sort)":
 
-    for VARFILE in $(find $CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/*|sort); do
+    FIND_DIR=$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/
+
+    for VARFILE in $(find $CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/* -type f|sort); do
 
 	BASENAME=$(basename $VARFILE)
+        
+        VARFILE_BASE=${VARFILE#$FIND_DIR}
 
-	DOCFILE=$CONFIGUREPLUS_DIR_OUT/doc/$BASENAME
+        VARFILE_KEY=${VARFILE_BASE//\//_}
 
-	DOCFILE_GLOBAL=~/.config/configureplus/.configureplus/doc/$BASENAME
+	DOCFILE=$CONFIGUREPLUS_DIR_OUT/doc/$VARFILE_BASE
 
-#	echo_local DOCFILE=$DOCFILE
+	DOCFILE_GLOBAL=~/.config/configureplus/.configureplus/doc/$VARFILE_BASE
+
+	DOCFILE=$DOCFILE_GLOBAL
+
+	echo_local DOCFILE=$DOCFILE
 
 #	echo_local DOCFILE_GLOBAL=$DOCFILE_GLOBAL
 
-	DOCFILE=$DOCFILE_GLOBAL
 	
 	if [ -f $DOCFILE ]; then
 
@@ -1093,19 +1182,27 @@ function configureplus_generate_configure_global_mk
 
     echo >>$CONFIGUREPLUS_DIR_OUT/global.mk
 
-    for VARFILE in $CONFIGUREPLUS_DIR_OUT/global/*; do
+    FIND_DIR=$CONFIGUREPLUS_DIR_OUT/global/
+    
+    for VARFILE in $(find $CONFIGUREPLUS_DIR_OUT/global/* -type f); do
 
 	BASENAME=$(basename $VARFILE)
 
-	DOCFILE=$CONFIGUREPLUS_DIR_OUT/doc/$BASENAME
+        VARFILE_BASE=${VARFILE#$FIND_DIR}
+
+        VARFILE_KEY=${VARFILE_BASE//\//_}
+
+	DOCFILE=$CONFIGUREPLUS_DIR_OUT/doc/$VARFILE_BASE
+
+        echo_local DOCFILE=$DOCFILE
 
 	if [ -f $DOCFILE ]; then
 
-	    printf "%s# %s\n" "$BASENAME=\$(shell cat $VARFILE)" "$(cat $DOCFILE)" >>$CONFIGUREPLUS_DIR_OUT/global.mk
+	    printf "%s# %s\n" "$VARFILE_KEY=\$(shell cat $VARFILE)" "$(cat $DOCFILE)" >>$CONFIGUREPLUS_DIR_OUT/global.mk
 
 	else
 
-	    echo "$BASENAME=\$(shell cat $VARFILE)" >>$CONFIGUREPLUS_DIR_OUT/global.mk
+	    echo "$VARFILE_KEY=\$(shell cat $VARFILE)" >>$CONFIGUREPLUS_DIR_OUT/global.mk
 	fi
 
     done
@@ -1122,19 +1219,28 @@ function configureplus_generate_configure_session_mk
 
     echo >>$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION.mk
 
-    for VARFILE in $(find $CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/*|sort); do
+    FIND_DIR=$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/
+    
+    for VARFILE in $(find $CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/* -type f|sort); do
 
 	BASENAME=$(basename $VARFILE)
 
-	DOCFILE=$CONFIGUREPLUS_DIR_OUT/doc/$BASENAME
+        VARFILE_BASE=${VARFILE#$FIND_DIR}
+
+        VARFILE_KEY=${VARFILE_BASE//\//_}
+
+
+	DOCFILE=$CONFIGUREPLUS_DIR_OUT/doc/$VARFILE_BASE
+
+        echo_local DOCFILE=$DOCFILE
 
 	if [ -f $DOCFILE ]; then
 
-	    printf "%s# %s\n" "$BASENAME=\$(shell cat $VARFILE)" "$(cat $DOCFILE)" >>$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION.mk
+	    printf "%s# %s\n" "$VARFILE_KEY=\$(shell cat $VARFILE)" "$(cat $DOCFILE)" >>$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION.mk
 
 	else
 
-	    echo "$BASENAME=\$(shell cat $VARFILE)" >>$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION.mk
+	    echo "$VARFILE_KEY=\$(shell cat $VARFILE)" >>$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION.mk
 	fi
 
     done
@@ -1150,19 +1256,28 @@ function configureplus_generate_configure_global_bash
 
     echo >>$CONFIGUREPLUS_DIR_OUT/global.bash
 
-    for VARFILE in $CONFIGUREPLUS_DIR_OUT/global/*; do
+    FIND_FILE=$CONFIGUREPLUS_DIR_OUT/global/
+    
+    for VARFILE in $(find $CONFIGUREPLUS_DIR_OUT/global/* -type f); do
 
 	BASENAME=$(basename $VARFILE)
 
-	DOCFILE=$CONFIGUREPLUS_DIR_OUT/doc/$BASENAME
+        VARFILE_BASE=${VARFILE#$FIND_DIR}
+
+        VARFILE_KEY=${VARFILE_BASE//\//_}
+
+
+	DOCFILE=$CONFIGUREPLUS_DIR_OUT/doc/$VARFILE_BASE
+
+        	echo_local DOCFILE=$DOCFILE
 
 	if [ -f $DOCFILE ]; then
 
-	    printf "export %-85s # %s\n" "$BASENAME='$(cat $VARFILE)'" "$(cat $DOCFILE)" >>$CONFIGUREPLUS_DIR_OUT/global.bash
+	    printf "export %-85s # %s\n" "$VARFILE_KEY='$(cat $VARFILE)'" "$(cat $DOCFILE)" >>$CONFIGUREPLUS_DIR_OUT/global.bash
 
 	else
 
-	    printf "export %s\n" "$BASENAME='$(cat $VARFILE)'" >>$CONFIGUREPLUS_DIR_OUT/global.bash
+	    printf "export %s\n" "$VARFILE_KEY='$(cat $VARFILE)'" >>$CONFIGUREPLUS_DIR_OUT/global.bash
 	fi
 
     done
@@ -1180,19 +1295,27 @@ function configureplus_generate_configure_global_bash_local
 
     echo >>$CONFIGUREPLUS_DIR_OUT/global.bash_local
 
-    for VARFILE in $CONFIGUREPLUS_DIR_OUT/global/*; do
+    FIND_DIR=$CONFIGUREPLUS_DIR_OUT/global/
+    
+    for VARFILE in $(find $CONFIGUREPLUS_DIR_OUT/global/* -type f); do
 
 	BASENAME=$(basename $VARFILE)
 
-	DOCFILE=$CONFIGUREPLUS_DIR_OUT/doc/$BASENAME
+        VARFILE_BASE=${VARFILE#$FIND_DIR}
+
+        VARFILE_KEY=${VARFILE_BASE//\//_}
+        
+	DOCFILE=$CONFIGUREPLUS_DIR_OUT/doc/$VARFILE_BASE
+
+        	echo_local DOCFILE=$DOCFILE
 
 	if [ -f $DOCFILE ]; then
 
-	    printf "%-85s # %s\n" "$BASENAME='$(cat $VARFILE)'" "$(cat $DOCFILE)" >>$CONFIGUREPLUS_DIR_OUT/global.bash_local
+	    printf "%-85s # %s\n" "$VARFILE_KEY='$(cat $VARFILE)'" "$(cat $DOCFILE)" >>$CONFIGUREPLUS_DIR_OUT/global.bash_local
 
 	else
 
-	    printf "%s\n" "$BASENAME='$(cat $VARFILE)'" >>$CONFIGUREPLUS_DIR_OUT/global.bash_local
+	    printf "%s\n" "$VARFILE_KEY='$(cat $VARFILE)'" >>$CONFIGUREPLUS_DIR_OUT/global.bash_local
 	fi
 
     done
@@ -1214,7 +1337,9 @@ function configureplus_generate_configure_global_json
     echo "  {" >>$CONFIGUREPLUS_DIR_OUT/global.json
 
 
-    local ARRAY=($CONFIGUREPLUS_DIR_OUT/global/*)
+    FIND_DIR=$CONFIGUREPLUS_DIR_OUT/global/
+    
+    local ARRAY=( $(find $CONFIGUREPLUS_DIR_OUT/global/* -type f) )
 
     local ARRAY_LEN=${#ARRAY[@]}
 
@@ -1224,6 +1349,10 @@ function configureplus_generate_configure_global_json
 
 	local BASENAME=$(basename $VARFILE)
 
+        VARFILE_BASE=${VARFILE#$FIND_DIR}
+
+        VARFILE_KEY=${VARFILE_BASE//\//_}
+        
         COMMA=
 
         if [[ $CNT < $ARRAY_LEN ]]; then
@@ -1232,7 +1361,7 @@ function configureplus_generate_configure_global_json
             
         fi
 
-	printf -v VAR '   "%s" : "%s"%s'  $BASENAME "$(cat $VARFILE)" $COMMA
+	printf -v VAR '   "%s" : "%s"%s'  $VARFILE_KEY "$(cat $VARFILE)" $COMMA
 
         echo "$VAR"  >>$CONFIGUREPLUS_DIR_OUT/global.json
 
@@ -1263,19 +1392,29 @@ function configureplus_generate_configure_session_bash
 
     echo >>$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION.bash
 
-    for VARFILE in $(find $CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/*|sort); do
+    FIND_DIR=$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/
+    
+    for VARFILE in $(find $CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/* -type f|sort); do
 
 	BASENAME=$(basename $VARFILE)
 
-	DOCFILE=$CONFIGUREPLUS_DIR_OUT/doc/$BASENAME
+        VARFILE_BASE=${VARFILE#$FIND_DIR}
+
+        VARFILE_KEY=${VARFILE_BASE//\//_}
+
+        echo_local configureplus_generate_configure_session_bash - VARFILE_KEY=$VARFILE_KEY
+        
+	DOCFILE=$CONFIGUREPLUS_DIR_OUT/doc/$VARFILE_BASE
+
+        	echo_local DOCFILE=$DOCFILE
 
 	if [ -f $DOCFILE ]; then
 
-	    printf "export %-85s # %s\n" "$BASENAME='$(cat $VARFILE)'" "$(cat $DOCFILE)" >>$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION.bash
+	    printf "export %-85s # %s\n" "$VARFILE_KEY='$(cat $VARFILE)'" "$(cat $DOCFILE)" >>$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION.bash
 
 	else
 
-	    printf "export %s\n" "$BASENAME='$(cat $VARFILE)'" >>$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION.bash
+	    printf "export %s\n" "$VARFILE_KEY='$(cat $VARFILE)'" >>$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION.bash
 	fi
         
     done
@@ -1291,21 +1430,28 @@ function configureplus_generate_configure_session_bash_local
 
     echo >>$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION.bash_local
 
-    for VARFILE in $(find $CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/*|sort); do
+    FIND_DIR=$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/
+    
+    for VARFILE in $(find $CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/* -type f|sort); do
 
 	BASENAME=$(basename $VARFILE)
 
-	DOCFILE=$CONFIGUREPLUS_DIR_OUT/doc/$BASENAME
+        VARFILE_BASE=${VARFILE#$FIND_DIR}
+
+        VARFILE_KEY=${VARFILE_BASE//\//_}
+
+	DOCFILE=$CONFIGUREPLUS_DIR_OUT/doc/$VARFILE_BASE
 
         #echo_local $VARFILE .... ENTRY
+	echo_local DOCFILE=$DOCFILE
 
 	if [ -f $DOCFILE ]; then
 
-	    printf "%-85s # %s\n" "$BASENAME='$(cat $VARFILE)'" "$(cat $DOCFILE)" >>$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION.bash_local
+	    printf "%-85s # %s\n" "$VARFILE_KEY='$(cat $VARFILE)'" "$(cat $DOCFILE)" >>$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION.bash_local
 
 	else
 
-	    printf "%s\n" "$BASENAME='$(cat $VARFILE)'" >>$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION.bash_local
+	    printf "%s\n" "$VARFILE_KEY='$(cat $VARFILE)'" >>$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION.bash_local
 	fi
 
     done
@@ -1323,7 +1469,11 @@ function configureplus_generate_configure_session_json
 
     echo "  {" >>$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION.json
 
-    local ARRAY=($(echo $CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/*|sort))
+    FIND_DIR=$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/
+
+    echo_local configureplus_generate_configure_session_json - FIND_DIR=$FIND_DIR
+
+    local ARRAY=($(find $CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/* -type f|sort))
 
     local ARRAY_LEN=${#ARRAY[@]}
 
@@ -1331,7 +1481,15 @@ function configureplus_generate_configure_session_json
 
     for VARFILE in ${ARRAY[@]}; do
 
+        echo_local configureplus_generate_configure_session_json - VARFILE=$VARFILE
+
 	BASENAME=$(basename $VARFILE)
+
+        VARFILE_BASE=${VARFILE#$FIND_DIR}
+
+        VARFILE_KEY=${VARFILE_BASE//\//_}
+
+        echo_local configureplus_generate_configure_session_json - VARFILE_KEY=$VARFILE_KEY
 
         COMMA=
 
@@ -1343,7 +1501,7 @@ function configureplus_generate_configure_session_json
             
         fi
 
-	printf -v VAR '   "%s" : "%s"%s'  $BASENAME "$(cat $VARFILE)" $COMMA
+	printf -v VAR '   "%s" : "%s"%s'  $VARFILE_KEY "$(cat $VARFILE)" $COMMA
 
         echo "$VAR"  >>$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION.json
 
@@ -1546,6 +1704,13 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
             # Your existing env command logic
             configureplus_env
             ;;
+        
+        bootstrap)
+            # Start from scratch and init to baseline
+
+            configureplus_bootstrap
+            ;;
+        
         set)
             # Your existing set command logic
             configureplus_setup

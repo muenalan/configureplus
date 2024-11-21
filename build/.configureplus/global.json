@@ -1,0 +1,14 @@
+
+[
+
+  {
+   "CONFIGURE_DIR_OUTPUT" : "platforms",
+   "CONFIGURE_GIT_TAG" : "v0.0.1",
+   "CONFIGURE_VERSION" : "0.0.1",
+   "CONFIGURE_DIR_TEMPLATE" : "../template",
+   "CONFIGURE_PKGNAME" : "configureplus",
+   "CONFIGUREPLUS_SESSION" : "darwin19",
+   "CONFIGUREPLUS_SESSION" : "darwin19"
+  }
+
+]

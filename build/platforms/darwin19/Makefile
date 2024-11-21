@@ -5,6 +5,11 @@ include .configureplus/currentsession.mk
 PRE=/usr/local
 DIR_TEMPLATE=$(CONFIGURE_PKGNAME)/$(PRE)
 
+.PHONY: status
+
+status:
+	echo CONFIGURE_PKGNAME=$(CONFIGURE_PKGNAME)
+
 install-systemwide:
 	mkdir -p $(PRE)/bin && cp -r $(DIR_TEMPLATE)/bin/* $(PRE)/bin/
 	chmod +x $(DIR_TEMPLATE)/bin/*
