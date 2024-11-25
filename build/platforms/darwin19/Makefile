@@ -3,6 +3,7 @@
 include .configureplus/currentsession.mk
 
 PRE=/usr/local
+
 DIR_TEMPLATE=$(CONFIGURE_PKGNAME)/$(PRE)
 
 .PHONY: status install-systemwide install-systemwide-lib install-systemwide-share install-systemwide-doc uninstall zip archive-master archive package deb test install-deb uninstall-deb clean
@@ -17,15 +18,25 @@ install-systemwide:
 	-cp -r .configureplus ~/.config/$(CONFIGURE_PKGNAME)/
 
 status:
+	CONFIGURE_BASH_PROFILE_FILE="$(shell cat .configureplus/session/darwin19/CONFIGURE/BASH_PROFILE_FILE)"
+	CONFIGURE_FLAG_TOOL_BTEST="$(shell cat .configureplus/session/darwin19/CONFIGURE/FLAG_TOOL_BTEST)"
+	CONFIGURE_MKTEMP="$(shell cat .configureplus/session/darwin19/CONFIGURE/MKTEMP)"
+	CONFIGURE_OSTYPE="$(shell cat .configureplus/session/darwin19/CONFIGURE/OSTYPE)"
+	CONFIGURE_TIMESTAMP="$(shell cat .configureplus/session/darwin19/CONFIGURE/TIMESTAMP)"
+	CONFIGUREPLUS_DIR_CONFIG="$(shell cat .configureplus/session/darwin19/CONFIGUREPLUS/DIR_CONFIG)"
+	CONFIGUREPLUS_DIR_OUT="$(shell cat .configureplus/session/darwin19/CONFIGUREPLUS/DIR_OUT)"
+	CONFIGUREPLUS_DIR_OUT_SESSIONS="$(shell cat .configureplus/session/darwin19/CONFIGUREPLUS/DIR_OUT_SESSIONS)"
+	CONFIGUREPLUS_PWD="$(shell cat .configureplus/session/darwin19/CONFIGUREPLUS/PWD)"
+	CONFIGUREPLUS_SESSION="$(shell cat .configureplus/session/darwin19/CONFIGUREPLUS/SESSION)"
+	CONFIGUREPLUS_VERSION="$(shell cat .configureplus/session/darwin19/CONFIGUREPLUS/VERSION)"
 	echo CONFIGURE_PKGNAME=$(CONFIGURE_PKGNAME)
 
-FILES=$(wildcard $(DIR_TEMPLATE)/lib/*)
+FILES=$(wildcard $(PWD)/$(DIR_TEMPLATE)/lib/$(CONFIGURE_PKGNAME)/*) 
 
 install-systemwide-lib:
 	install -d $(PRE)/lib/$(CONFIGURE_PKGNAME) || mkdir -p $(PRE)/lib/$(CONFIGURE_PKGNAME)
-	@if [ -n "$(FILES)" ]; then \
-		echo install -m 755 -t $(PRE)/lib/$(CONFIGURE_PKGNAME) $(FILES); \
-		install -m 755 -t $(PRE)/lib/$(CONFIGURE_PKGNAME) $(FILES); \
+	if [ -n "$(wildcard $(DIR_TEMPLATE)/lib/$(CONFIGURE_PKGNAME)/*) " ]; then \
+		install -m 755 $(wildcard $(DIR_TEMPLATE)/lib/$(CONFIGURE_PKGNAME)/*) $(PRE)/lib/$(CONFIGURE_PKGNAME)/;  \
 	fi
 
 FILES=$(wildcard $(DIR_TEMPLATE)/share/*)
@@ -92,8 +103,7 @@ uninstall-deb:
 
 clean:
 	-find . -name '*~' |zip -rm $(CONFIGURE_MKTEMP)/$(CONFIGURE_PKGNAME)-bak.zip -@
-	-find . -name '*.bak' |zip -rm $(CONFIGURE_MKTEMP)/$(CONFIGURE_PKGNAME)-bak.zip -@
-	-rm -r .configureplus/session/$(CONFIGUREPLUS_SESSION)*
+	-zip -rm .configureplus/session-bak.zip .configureplus/session/$(CONFIGUREPLUS_SESSION)*
 
 
 

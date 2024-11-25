@@ -32,7 +32,7 @@ if [[ -z "$CONFIGUREPLUS_BASEDIR" ]];then
 
 fi
 
-source $CONFIGUREPLUS_BASEDIR/lib/configureplus.bash
+source $CONFIGUREPLUS_BASEDIR/lib/configureplus/configureplus.bash
 
 # Help function
 

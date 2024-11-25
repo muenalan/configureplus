@@ -14,4 +14,3 @@ CONFIGUREPLUS_DIR_OUT_SESSIONS=$(shell cat .configureplus/session/darwin19/CONFI
 CONFIGUREPLUS_PWD=$(shell cat .configureplus/session/darwin19/CONFIGUREPLUS/PWD)
 CONFIGUREPLUS_SESSION=$(shell cat .configureplus/session/darwin19/CONFIGUREPLUS/SESSION)
 CONFIGUREPLUS_VERSION=$(shell cat .configureplus/session/darwin19/CONFIGUREPLUS/VERSION)
-FEATURES=$(shell cat .configureplus/session/darwin19/FEATURES)

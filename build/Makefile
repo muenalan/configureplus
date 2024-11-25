@@ -13,7 +13,7 @@ install:
 	@mkdir -p $(CONFIGURE_DIR_OUTPUT)/$(CONFIGURE_OSTYPE)/$(CONFIGURE_PKGNAME)/usr/local/share && rsync -ru --progress $(CONFIGURE_DIR_TEMPLATE)/share/* $(CONFIGURE_DIR_OUTPUT)/$(CONFIGURE_OSTYPE)/$(CONFIGURE_PKGNAME)/usr/local/share/
 	@mkdir -p ~/.config/$(CONFIGURE_PKGNAME)/
 	@rsync -ru --progress .configureplus ~/.config/$(CONFIGURE_PKGNAME)/
-	cd $(CONFIGURE_DIR_OUTPUT)/$(CONFIGURE_OSTYPE) && configureplus/usr/local/bin/configureplus
+	cd $(CONFIGURE_DIR_OUTPUT)/$(CONFIGURE_OSTYPE) && CONFIGUREPLUS_BASEDIR=configureplus/usr/local configureplus/usr/local/bin/configureplus
 
 init: 
 	mkdir -p template/bin
