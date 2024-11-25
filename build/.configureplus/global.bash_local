@@ -1,10 +1,10 @@
 
-# Generated with configureplus (CONFIGUREPLUS_VERSION=0.16.0, CONFIGUREPLUS_PWD=/Users/muenalan/git-workdirs/github.com/muenalan/bash/configureplus/build)
+# Generated with configureplus (CONFIGUREPLUS_VERSION=0.16.2, CONFIGUREPLUS_PWD=/home/muenalan/git-workdirs/configureplus/build)
 
-CONFIGURE_DIR_OUTPUT='platforms'                                                      # folder for general and os-specific files (merged with CONFIG_DIR_TEMPLATE)
-CONFIGURE_GIT_TAG='v0.0.1'
-CONFIGURE_VERSION='0.0.1'                                                             # distribution version
 CONFIGURE_DIR_TEMPLATE='../template'                                                  # folder for os-specific files and template files merged
 CONFIGURE_PKGNAME='configureplus'                                                     # distribution package name
-CONFIGUREPLUS_SESSION='darwin19'                                                      # session-id (such as $OSTYPE)
+CONFIGURE_VERSION='0.0.1'                                                             # distribution version
+CONFIGURE_DIR_OUTPUT='platforms'                                                      # folder for general and os-specific files (merged with CONFIG_DIR_TEMPLATE)
+CONFIGURE_GIT_TAG='v0.0.1'
+CONFIGUREPLUS_SESSION=''                                                              # session-id (such as $OSTYPE)
 CONFIGUREPLUS_SESSION='darwin19'

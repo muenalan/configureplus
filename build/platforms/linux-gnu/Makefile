@@ -14,13 +14,12 @@ install-systemwide:
 	-mkdir -p ~/.config/$(CONFIGURE_PKGNAME)/
 	-cp -r .configureplus ~/.config/$(CONFIGURE_PKGNAME)/
 
-FILES=$(wildcard $(DIR_TEMPLATE)/lib/*)
+FILES=$(wildcard $(DIR_TEMPLATE)/lib/$(CONFIGURE_PKGNAME)/*)
 
 install-systemwide-lib:
 	install -d $(PRE)/lib/$(CONFIGURE_PKGNAME) || mkdir -p $(PRE)/lib/$(CONFIGURE_PKGNAME)
-	@if [ -n "$(FILES)" ]; then \
-		echo install -m 755 -t $(PRE)/lib/$(CONFIGURE_PKGNAME) $(FILES); \
-		install -m 755 -t $(PRE)/lib/$(CONFIGURE_PKGNAME) $(FILES); \
+	if [ -n "$(wildcard $(DIR_TEMPLATE)/lib/$(CONFIGURE_PKGNAME)/*)" ]; then \
+		install -m 755 -t $(PRE)/lib/$(CONFIGURE_PKGNAME) $(wildcard $(DIR_TEMPLATE)/lib/$(CONFIGURE_PKGNAME)/*); \
 	fi
 
 FILES=$(wildcard $(DIR_TEMPLATE)/share/*)

@@ -1,4 +1,4 @@
 
-# Generated with configureplus (CONFIGUREPLUS_VERSION=0.16.0, CONFIGUREPLUS_PWD=/Users/muenalan/git-workdirs/github.com/muenalan/bash/configureplus/build/platforms/darwin19)
+# Generated with configureplus (CONFIGUREPLUS_VERSION=0.16.2, CONFIGUREPLUS_PWD=/home/muenalan/git-workdirs/configureplus/build/platforms/linux-gnu)
 
-export CONFIGUREPLUS_SESSION='darwin19'
+export CONFIGUREPLUS_SESSION='linux-gnu'
