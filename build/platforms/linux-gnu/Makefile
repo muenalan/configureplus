@@ -3,23 +3,40 @@
 include .configureplus/currentsession.mk
 
 PRE=/usr/local
+
 DIR_TEMPLATE=$(CONFIGURE_PKGNAME)/$(PRE)
 
+.PHONY: status install-systemwide install-systemwide-lib install-systemwide-share install-systemwide-doc uninstall zip archive-master archive package deb test install-deb uninstall-deb clean
+
 install-systemwide:
-	chmod +x $(DIR_TEMPLATE)/bin/*
 	mkdir -p $(PRE)/bin && cp -r $(DIR_TEMPLATE)/bin/* $(PRE)/bin/
+	chmod +x $(DIR_TEMPLATE)/bin/*
 	make -B install-systemwide-lib
 	make -B install-systemwide-share
 	make -B install-systemwide-doc
 	-mkdir -p ~/.config/$(CONFIGURE_PKGNAME)/
 	-cp -r .configureplus ~/.config/$(CONFIGURE_PKGNAME)/
 
-FILES=$(wildcard $(DIR_TEMPLATE)/lib/$(CONFIGURE_PKGNAME)/*)
+status:
+	CONFIGURE_BASH_PROFILE_FILE="$(shell cat .configureplus/session/linux-gnu/CONFIGURE/BASH_PROFILE_FILE)"
+	CONFIGURE_FLAG_TOOL_BTEST="$(shell cat .configureplus/session/linux-gnu/CONFIGURE/FLAG_TOOL_BTEST)"
+	CONFIGURE_MKTEMP="$(shell cat .configureplus/session/linux-gnu/CONFIGURE/MKTEMP)"
+	CONFIGURE_OSTYPE="$(shell cat .configureplus/session/linux-gnu/CONFIGURE/OSTYPE)"
+	CONFIGURE_TIMESTAMP="$(shell cat .configureplus/session/linux-gnu/CONFIGURE/TIMESTAMP)"
+	CONFIGUREPLUS_DIR_CONFIG="$(shell cat .configureplus/session/linux-gnu/CONFIGUREPLUS/DIR_CONFIG)"
+	CONFIGUREPLUS_DIR_OUT="$(shell cat .configureplus/session/linux-gnu/CONFIGUREPLUS/DIR_OUT)"
+	CONFIGUREPLUS_DIR_OUT_SESSIONS="$(shell cat .configureplus/session/linux-gnu/CONFIGUREPLUS/DIR_OUT_SESSIONS)"
+	CONFIGUREPLUS_PWD="$(shell cat .configureplus/session/linux-gnu/CONFIGUREPLUS/PWD)"
+	CONFIGUREPLUS_SESSION="$(shell cat .configureplus/session/linux-gnu/CONFIGUREPLUS/SESSION)"
+	CONFIGUREPLUS_VERSION="$(shell cat .configureplus/session/linux-gnu/CONFIGUREPLUS/VERSION)"
+	echo CONFIGURE_PKGNAME=$(CONFIGURE_PKGNAME)
+
+FILES=$(wildcard $(PWD)/$(DIR_TEMPLATE)/lib/$(CONFIGURE_PKGNAME)/*) 
 
 install-systemwide-lib:
 	install -d $(PRE)/lib/$(CONFIGURE_PKGNAME) || mkdir -p $(PRE)/lib/$(CONFIGURE_PKGNAME)
-	if [ -n "$(wildcard $(DIR_TEMPLATE)/lib/$(CONFIGURE_PKGNAME)/*)" ]; then \
-		install -m 755 -t $(PRE)/lib/$(CONFIGURE_PKGNAME) $(wildcard $(DIR_TEMPLATE)/lib/$(CONFIGURE_PKGNAME)/*); \
+	if [ -n "$(wildcard $(DIR_TEMPLATE)/lib/$(CONFIGURE_PKGNAME)/*) " ]; then \
+		install -m 755 $(wildcard $(DIR_TEMPLATE)/lib/$(CONFIGURE_PKGNAME)/*) $(PRE)/lib/$(CONFIGURE_PKGNAME)/;  \
 	fi
 
 FILES=$(wildcard $(DIR_TEMPLATE)/share/*)
@@ -66,9 +83,9 @@ archive:
 	md5sum ../$(CONFIGURE_PKGNAME)-$(CONFIGURE_VERSION)-$(CONFIGURE_OSTYPE).tar.gz >../$(CONFIGURE_PKGNAME)-$(CONFIGURE_VERSION)-$(CONFIGURE_OSTYPE).tar.gz.sha256
 
 package:
-	mkdir -p ../packages
+	mkdir ../packages
 	mkdir -p  ../packages/$(CONFIGURE_PKGNAME)-$(CONFIGURE_VERSION)-$(CONFIGURE_OSTYPE) && cp -r . ../packages/$(CONFIGURE_PKGNAME)-$(CONFIGURE_VERSION)-$(CONFIGURE_OSTYPE)/
-#	mkdir -p  ../packages/$(CONFIGURE_PKGNAME)-$(CONFIGURE_VERSION)-$(CONFIGURE_OSTYPE)-homebrew &&	cp -r $(CONFIGURE_PKGNAME)/.brew ../packages/$(CONFIGURE_PKGNAME)-$(CONFIGURE_VERSION)-$(CONFIGURE_OSTYPE)-homebrew/
+	mkdir -p  ../packages/$(CONFIGURE_PKGNAME)-$(CONFIGURE_VERSION)-$(CONFIGURE_OSTYPE)-homebrew &&	cp -r $(CONFIGURE_PKGNAME)/.brew ../packages/$(CONFIGURE_PKGNAME)-$(CONFIGURE_VERSION)-$(CONFIGURE_OSTYPE)-homebrew/
 
 deb:
 	mkdir -p ../packages
@@ -86,8 +103,7 @@ uninstall-deb:
 
 clean:
 	-find . -name '*~' |zip -rm $(CONFIGURE_MKTEMP)/$(CONFIGURE_PKGNAME)-bak.zip -@
-	-find . -name '*.bak' |zip -rm $(CONFIGURE_MKTEMP)/$(CONFIGURE_PKGNAME)-bak.zip -@
-	-rm -r .configureplus/session/$(CONFIGUREPLUS_SESSION)*
+	-zip -rm .configureplus/session-bak.zip .configureplus/session/$(CONFIGUREPLUS_SESSION)*
 
 
 
