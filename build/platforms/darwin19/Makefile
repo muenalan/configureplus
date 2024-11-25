@@ -5,10 +5,7 @@ include .configureplus/currentsession.mk
 PRE=/usr/local
 DIR_TEMPLATE=$(CONFIGURE_PKGNAME)/$(PRE)
 
-.PHONY: status
-
-status:
-	echo CONFIGURE_PKGNAME=$(CONFIGURE_PKGNAME)
+.PHONY: status install-systemwide install-systemwide-lib install-systemwide-share install-systemwide-doc uninstall zip archive-master archive package deb test install-deb uninstall-deb clean
 
 install-systemwide:
 	mkdir -p $(PRE)/bin && cp -r $(DIR_TEMPLATE)/bin/* $(PRE)/bin/
@@ -18,6 +15,9 @@ install-systemwide:
 	make -B install-systemwide-doc
 	-mkdir -p ~/.config/$(CONFIGURE_PKGNAME)/
 	-cp -r .configureplus ~/.config/$(CONFIGURE_PKGNAME)/
+
+status:
+	echo CONFIGURE_PKGNAME=$(CONFIGURE_PKGNAME)
 
 FILES=$(wildcard $(DIR_TEMPLATE)/lib/*)
 

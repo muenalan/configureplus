@@ -8,4 +8,4 @@ CONFIGURE_VERSION=$(shell cat .configureplus/global/CONFIGURE/VERSION)# distribu
 CONFIGURE_DIR_TEMPLATE=$(shell cat .configureplus/global/CONFIGURE/DIR_TEMPLATE)# folder for os-specific files and template files merged
 CONFIGURE_PKGNAME=$(shell cat .configureplus/global/CONFIGURE/PKGNAME)# distribution package name
 CONFIGUREPLUS_SESSION=$(shell cat .configureplus/global/CONFIGUREPLUS/SESSION)# session-id (such as $OSTYPE)
-CONFIGUREPLUS_SESSION=$(shell cat .configureplus/global/CONFIGUREPLUS_SESSION)
+

@@ -1,0 +1,21 @@
+#!/bin/bash
+
+    for FOUND in $(find . -name .configureplus -type d); do
+
+       cp ~/.config/configureplus/.configureplus/dynamic.bash $FOUND/dynamic.bash
+
+       perl -pi.bak -e 's/\/CONFIGUREPLUS_SESSION/\/CONFIGUREPLUS\/SESSION/gm' $FOUND/currentsession.*
+        
+       echo "echo $OSTYPE >$FOUND/session/$OSTYPE/CONFIGUREPLUS/SESSION"
+
+       find $FOUND -name 'CONFIGURE_*' |perl -ne 'chomp; $a=$_; $a=~s/CONFIGURE_/CONFIGURE\//gm; mue->file($a)->dir->mkpath; print qq{mv $_ $a\n};'|sh 
+
+       find $FOUND -name 'CONFIGUREPLUS_*' |perl -ne 'chomp; $a=$_; $a=~s/CONFIGUREPLUS_/CONFIGUREPLUS\//gm; mue->file($a)->dir->mkpath; print qq{mv $_ $a\n};'|sh
+
+       echo zip -rm9 bak.zip $FOUND/session/darwin19/CONFIGURE_*
+
+       echo zip -rm9 bak.zip $FOUND/session/darwin19/CONFIGUREPLUS_*
+
+    done
+    
+

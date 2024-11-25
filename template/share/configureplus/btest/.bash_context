@@ -1,0 +1,50 @@
+
+
+function ob_command_source_invoke
+{
+
+cat <<-UNTIL_HERE
+
+# Summary of Each Feature Logic
+
+   - Feature 1: Test helper commands
+   - Feature 2: Test ob_command commands
+   - Feature 3: 
+   - Feature 4: 
+   - Feature 5: 
+
+1..5
+
+UNTIL_HERE
+
+# Calling all subtests
+
+echo Change PWD to OB_OBJECT_PATH_FULL=$OB_OBJECT_PATH_FULL..
+
+echo Custom TEST invocation..
+
+cd $OB_OBJECT_PATH_FULL
+
+for FOUND in $(find $OB_OBJECT_PATH_FULL -mindepth 2 -name .bash_context -type f|sort); do 
+
+    DIRNAME=`dirname "$FOUND"`
+
+    SUBTEST=$(ob_relpath "$DIRNAME" "$OB_OBJECT_PATH_FULL")
+
+    echo $OB_OBJECT/$SUBTEST test
+    
+    #    ob call $OB_OBJECT/$SUBTEST
+
+done
+
+echo ..done
+
+
+
+echo BTEST invocation..
+
+BT_OPT_FLAG_TREE=1 btest folder "$OB_OBJECT_PATH_FULL"|btest-tap-parser-perl
+
+echo ..done
+
+}

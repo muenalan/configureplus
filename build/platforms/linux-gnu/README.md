@@ -9,7 +9,7 @@ You can install it only locally for the user (userprofile), or system-wide.
 
 ## INSTALL userprofile (darwin19)
 
-    $ echo $OSTYPE >.configure/global/CONFIGUREPLUS_SESSION
+    $ echo $OSTYPE >.configure/global/CONFIGUREPLUS/SESSION
     $ ./bin/configureplus
     $ make install
       .. installing userprofile
@@ -19,7 +19,7 @@ You can install it only locally for the user (userprofile), or system-wide.
 
 ## INSTALL systemwide (darwin19)
 
-    $ echo $OSTYPE >.configure/global/CONFIGUREPLUS_SESSION
+    $ echo $OSTYPE >.configure/global/CONFIGUREPLUS/SESSION
     $ ./bin/configureplus
     $ sudo make install-systemwide
       .. installing systemwide

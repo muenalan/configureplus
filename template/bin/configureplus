@@ -22,10 +22,11 @@
 #==============================================================================
 
 # Script version
-CONFIGUREPLUS_VERSION=0.16.0
+CONFIGUREPLUS_VERSION=0.16.2
 
 # Set script name
 SCRIPT_NAME=$(basename "$0")
+
 EXEFILE=`which $0`
 
 # COMMONS ENV
@@ -46,7 +47,7 @@ function configureplus_help_show
 {
     echo "Usage: $SCRIPT_NAME [--verbose] [--global] [--detect-os] <command> [options] [args]"
     echo
-    echo "Commands:"
+    echo "Sub-Commands:"
     echo "  help <command>        Get help for a specific command"
     echo "  version               Show the version"
     echo "  readme                Show the readme (in markdown format)"
@@ -57,7 +58,10 @@ function configureplus_help_show
     echo "  get <varname>         Get a variable value (See doc 'Variable Lookup Order' section)"
     echo "  status                Show configuration tree"
     echo "  list                  List session paths"
-    echo
+    echo " "
+    echo "Sub-Commands (devel):"
+    echo "  bootstrap             Bootstrap a new .configureplus directory, step-by-step"
+    echo " "
     echo "Options:"
     echo "  --verbose           Print more information"
     echo "  --home              Operate on home configuration"
@@ -67,12 +71,18 @@ function configureplus_help_show
     echo "For more information, use '$SCRIPT_NAME help <command>'"
 }
 
-# Check if the script is being sourced
-if [[ "${BASH_SOURCE[0]}" != "${0}" ]]; then
-    INVOCATION=SOURCED # echo "Script is being sourced"
-else
-    INVOCATION=RUN # echo "Script is being run"
-    # Your main script logic here
+if [[ -z "$CONFIGUREPLUS_INVOCATION" ]]; then
+
+    CONFIGUREPLUS_INVOCATION=UNKNOWN
+
+    # Check if the script is being sourced
+    if [[ "${BASH_SOURCE[0]}" != "${0}" ]]; then
+        CONFIGUREPLUS_INVOCATION=SOURCED # echo "Script is being sourced"
+    else
+        CONFIGUREPLUS_INVOCATION=RUN # echo "Script is being run"
+        # Your main script logic here
+    fi
+
 fi
 
 
@@ -84,14 +94,15 @@ fi
 
 function echo_local
 {
-   if [ "$CONFIGUREPLUS_DEBUG" -ge "1" ]; then
-       >&2 echo "[INFO stdout, $CONFIGUREPLUS_ZERO_ARG_BASENAME] : {" $@ "}"
-   fi
-}
+    if [[ "$@" == "" ]]; then
 
-function warn_local
-{
-    >&2 echo "[WARN stdout, $CONFIGUREPLUS_ZERO_ARG_BASENAME] : {" $@ "}"
+       >&1 echo "[INFO echo_local, $CONFIGUREPLUS_ZERO_ARG_BASENAME] : EMPTY_LINE"
+
+       exit 100
+       
+    fi
+       
+       >&1 echo "[INFO echo_local, $CONFIGUREPLUS_ZERO_ARG_BASENAME] : {" $@ "}"
 }
 
 function echo_local_level
@@ -102,9 +113,16 @@ function echo_local_level
     
     if [ "$CONFIGUREPLUS_DEBUG" -ge "$LEVEL" ]; then
 
-        echo_local $@
+       >&1 echo "[INFO echo_local_level $LEVEL, $CONFIGUREPLUS_ZERO_ARG_BASENAME] : {" $@ "}"
 
     fi
+}
+
+function warn_local
+{
+   if [ "$CONFIGUREPLUS_DEBUG" -ge "1" ]; then
+    >&2 echo "[WARN warn_local, $CONFIGUREPLUS_ZERO_ARG_BASENAME] : {" $@ "}"
+   fi
 }
 
 function configureplus_env
@@ -116,32 +134,6 @@ function configureplus_env
     set|perl -ne 'print if /^CONFIGURE(PLUS)?_/;'
 
     warn_local "Note: Your local shell variables are not shown. Rerun: '$ set|grep CONFIGURE' if needed." 
-}
-
-function configureplus_bootstrap
-{
-    echo_local_level 2 configureplus_bootstrap - CONFIGUREPLUS_DEBUG=$CONFIGUREPLUS_DEBUG 
-
-    echo_local_level 2 configureplus_bootstrap - Checking ~/.config/$SCRIPT_NAME/$CONFIGUREPLUS_DIR_OUT/
-
-
-    echo_local_level 2 configureplus_bootstrap - configureplus_dir_config_setup
-    
-    configureplus_dir_config_setup
-
-    echo_local_level 2 configureplus_bootstrap - configureplus_session_identify ..
-
-    configureplus_session_identify
-
-    echo_local_level 2 configureplus_bootstrap - configureplus_session_directory_setup ..
-
-    configureplus_session_directory_setup
-
-
-    echo_local_level 2 configureplus_bootstrap - configureplus_globalvars_setup ..
-
-    configureplus_globalvars_setup
-
 }
 
 
@@ -288,17 +280,36 @@ function configureplus_fname
     echo $FNAME_PRE/$FNAME_POST
 }
 
+function configureplus_filepath_dir_create()
+{
+    local DIRNAME=$(dirname $1)
+
+    if [[ ! -d $DIRNAME ]]; then
+
+        mkdir -p $DIRNAME
+
+        if [[ ! -d $DIRNAME ]]; then
+
+            echo "*FATAL*: configureplus_filepath_dir_create - Could not create $DIRNAME with: mkdir -p $DIRNAME" >&2
+
+            exit 99
+        fi
+
+    fi
+    
+}
+
 function configureplus_set
 {
     if [ -z "$1" ]; then
 
-        echo_local "ARGUMENT_MISSING at pos 1: configureplus_set requires key argument."
+        echo_local_level 2 "ARGUMENT_MISSING at pos 1: configureplus_set requires key argument."
 
     fi
     
     if [ -z "$2" ]; then
 
-        echo_local "ARGUMENT_MISSING at pos 2: configureplus_set requires value argument."
+        echo_local_level 2 "ARGUMENT_MISSING at pos 2: configureplus_set requires value argument."
 
     fi
 
@@ -308,22 +319,24 @@ function configureplus_set
 
     shift
     
-    echo_local Setting $FNAME to value \"$1\" "(all values \"$*\")"
+    echo_local_level 2 Setting $FNAME to value \"$1\" "(all values \"$*\")"
 
-    >$FNAME echo $*
+    configureplus_filepath_dir_create $FNAME
+    
+    >$FNAME echo "$*"
 }
 
 function configureplus_add
 {
     if [ -z "$1" ]; then
 
-        echo_local "ARGUMENT_MISSING at pos 1: configureplus_add requires key argument."
+        echo_local_level 2 "ARGUMENT_MISSING at pos 1: configureplus_add requires key argument."
 
     fi
     
     if [ -z "$2" ]; then
 
-        echo_local "ARGUMENT_MISSING at pos 2: configureplus_add requires value argument."
+        echo_local_level 2 "ARGUMENT_MISSING at pos 2: configureplus_add requires value argument."
 
     fi
 
@@ -333,9 +346,17 @@ function configureplus_add
 
     shift
 
-    local OLD_VALUE=`cat $FNAME`
+    configureplus_filepath_dir_create $FNAME
+
+    local OLD_VALUE=""
+
+    if [[ -f "$FNAME" ]]; then
+
+       OLD_VALUE=`cat $FNAME`
+
+    fi
     
-    echo_local Adding to $FNAME value \"$1\" "(all values \"$*\")"
+    echo_local_level 2 Adding to $FNAME value \"$1\" "(all values \"$*\")"
 
     >$FNAME echo "$OLD_VALUE:$*"
 }
@@ -344,13 +365,13 @@ function configureplus_remove
 {
     if [ -z "$1" ]; then
 
-        echo_local "ARGUMENT_MISSING at pos 1: configureplus_remove requires key argument."
+        echo_local_level 2 "ARGUMENT_MISSING at pos 1: configureplus_remove requires key argument."
 
     fi
     
     if [ -z "$2" ]; then
 
-        echo_local "ARGUMENT_MISSING at pos 2: configureplus_remove requires value argument."
+        echo_local_level 2 "ARGUMENT_MISSING at pos 2: configureplus_remove requires value argument."
 
     fi
 
@@ -374,18 +395,18 @@ function configureplus_remove
 
     warn_local NEW_VALUE="$NEW_VALUE"
     
-    echo_local Removing from $FNAME value \"$1\" "(all values \"$*\")"
+    echo_local_level 2 Removing from $FNAME value \"$1\" "(all values \"$*\")"
 
     >$FNAME echo "$NEW_VALUE"
 }
 
 function configureplus_get
 {
-    echo_local Getting $CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/$1
+    echo_local_level 2 Getting $CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/$1
 
     local FNAME=$(configureplus_fname $1)
 
-    echo_local cat $FNAME
+    echo_local_level 2 cat $FNAME
 
     cat $FNAME
 
@@ -406,7 +427,7 @@ function configureplus_sessions_list
 
     fi
 
-    echo_local Currently CONFIGUREPLUS_SESSION=$CONFIGUREPLUS_SESSION
+    echo_local_level 2 Currently CONFIGUREPLUS_SESSION=$CONFIGUREPLUS_SESSION
 
 }
 
@@ -451,7 +472,7 @@ function configureplus_help
             ;;
         bootstrap)
             echo "Usage: configureplus bootstrap"
-            echo "Prepare everything for the baselines. Default folder: .configureplus. If --global is active, ~/.config/$SCRIPT_NAME/.$SCRIPT_NAME"
+            echo "Prepare everything for the baselines (bootstrap, step-by-step). Default folder: .configureplus. If --global is active, ~/.config/$SCRIPT_NAME/.$SCRIPT_NAME"
             echo "  Options:"
             echo "   --f|force           Force overwriting {planned}"
             echo "   --d|dryrun          Dryrun            {planned}"
@@ -912,12 +933,11 @@ UNTIL_HERE
 
 function configureplus_dir_config_setup
 {
-
     if [ ! -d "$CONFIGUREPLUS_DIR_CONFIG" ]; then
 
         export CONFIGUREPLUS_DIR_CONFIG_EMPTY=1
 
-        warn_local "init $CONFIGUREPLUS_DIR_CONFIG"
+        warn_local "configureplus_dir_config_setup - init $CONFIGUREPLUS_DIR_CONFIG"
 
         mkdir -p $CONFIGUREPLUS_DIR_CONFIG
         
@@ -935,45 +955,44 @@ function configureplus_session_var_update_ostype
 
 function configureplus_session_identify
 {
-    echo_local_level 2 configureplus_session_identify ..
+    echo_local_level 2 configureplus_session_identify - begin ..
     
-if [[ -z "$CONFIGUREPLUS_SESSION" ]]; then
+    if [[ -z "$CONFIGUREPLUS_SESSION" ]]; then
 
-    echo_local CONFIGUREPLUS_SESSION not set at start.
+        echo_local_level 2 configureplus_session_identify - CONFIGUREPLUS_SESSION not set at start.
 
-    if [ -f "$CONFIGUREPLUS_DIR_OUT/global/CONFIGUREPLUS/SESSION" ]; then
+        if [ -f "$CONFIGUREPLUS_DIR_OUT/global/CONFIGUREPLUS/SESSION" ]; then
 
-	CONFIGUREPLUS_SESSION=$(cat $CONFIGUREPLUS_DIR_OUT/global/CONFIGUREPLUS/SESSION)
-	
-	echo_local Setting to $CONFIGUREPLUS_SESSION "(from $CONFIGUREPLUS_DIR_OUT/global/CONFIGUREPLUS/SESSION)"
-	
-    else
+	    CONFIGUREPLUS_SESSION=$(cat $CONFIGUREPLUS_DIR_OUT/global/CONFIGUREPLUS/SESSION)
+	    
+	    echo_local_level 2 configureplus_session_identify - Setting to $CONFIGUREPLUS_SESSION "(from $CONFIGUREPLUS_DIR_OUT/global/CONFIGUREPLUS/SESSION)"
+	    
+        else
 
-        if [ "$CONFIGUREPLUS_DIR_OUT" == `basename $PWD` ]; then
+            if [ "$CONFIGUREPLUS_DIR_OUT" == `basename $PWD` ]; then
 
-            warn_local "init $CONFIGUREPLUS_DIR_OUT ... *SKIP* because we are currently inside one."
+                warn_local configureplus_session_identify - "init $CONFIGUREPLUS_DIR_OUT ... *SKIP* because we are currently inside one."
 
-            exit
+                exit
+            fi
+
+	    CONFIGUREPLUS_DEBUG=1 warn_local ERROR_NOT_SET_CONFIGUREPLUS_SESSION
+	    
+	    warn_local configureplus_session_identify - Will invoke: mkdir -p $CONFIGUREPLUS_DIR_OUT/global/CONFIGUREPLUS
+
+            mkdir -p $CONFIGUREPLUS_DIR_OUT/global/CONFIGUREPLUS
+
+	    warn_local configureplus_session_identify - Will invoke: echo $OSTYPE >$CONFIGUREPLUS_DIR_OUT/global/CONFIGUREPLUS/SESSION
+
+	    echo $OSTYPE >$CONFIGUREPLUS_DIR_OUT/global/CONFIGUREPLUS/SESSION
+
+	    warn_local configureplus_session_identify - Retry configureplus again.
+
+	    exit
         fi
-
-	CONFIGUREPLUS_DEBUG=1 warn_local ERROR_NOT_SET_CONFIGUREPLUS_SESSION
-	
-	warn_local Will invoke: mkdir -p $CONFIGUREPLUS_DIR_OUT/global
-
-        mkdir -p $CONFIGUREPLUS_DIR_OUT/global
-
-	warn_local Will invoke: echo $OSTYPE >$CONFIGUREPLUS_DIR_OUT/global/CONFIGUREPLUS/SESSION
-
-	echo $OSTYPE >$CONFIGUREPLUS_DIR_OUT/global/CONFIGUREPLUS/SESSION
-
-	warn_local Retry configureplus again.
-
-	exit
     fi
 
-fi
-
-    echo_local_level 2 configureplus_session_identify .. done
+    echo_local_level 2 configureplus_session_identify - .. done
 
 }
 
@@ -982,7 +1001,7 @@ fi
 
 function configureplus_session_directory_setup
 {
-    echo_local_level 2 configureplus_session_directory_setup ..
+    echo_local_level 2 configureplus_session_directory_setup - begin ..
 
     # $CONFIGUREPLUS_SESSION
 
@@ -992,17 +1011,17 @@ function configureplus_session_directory_setup
 
     if [ ! -f $CONFIGUREPLUS_DIR_OUT/dynamic.bash ]; then
 
-        warn_local Probing $CONFIGUREPLUS_DIR_CONFIG/$CONFIGUREPLUS_DIR_OUT/dynamic.bash
+        warn_local configureplus_session_directory_setup - Probing $CONFIGUREPLUS_DIR_CONFIG/$CONFIGUREPLUS_DIR_OUT/dynamic.bash
         
         if [ -f $CONFIGUREPLUS_DIR_CONFIG/$CONFIGUREPLUS_DIR_OUT/dynamic.bash ]; then
 
-            warn_local cp $CONFIGUREPLUS_DIR_CONFIG/$CONFIGUREPLUS_DIR_OUT/dynamic.bash $CONFIGUREPLUS_DIR_OUT/
+            warn_local configureplus_session_directory_setup - COMMAND: cp $CONFIGUREPLUS_DIR_CONFIG/$CONFIGUREPLUS_DIR_OUT/dynamic.bash $CONFIGUREPLUS_DIR_OUT/
 
             cp $CONFIGUREPLUS_DIR_CONFIG/$CONFIGUREPLUS_DIR_OUT/dynamic.bash $CONFIGUREPLUS_DIR_OUT/
 
         else
 
-            warn_local touch $CONFIGUREPLUS_DIR_OUT/dynamic.bash
+            warn_local configureplus_session_directory_setup - COMMAND: touch $CONFIGUREPLUS_DIR_OUT/dynamic.bash
 
             touch $CONFIGUREPLUS_DIR_OUT/dynamic.bash
 
@@ -1018,34 +1037,32 @@ function configureplus_session_directory_setup
 
     fi
 
-    echo_local_level 2 configureplus_session_directory_setup .. done
+    echo_local_level 2 configureplus_session_directory_setup - .. end
 
 }
 
 function configureplus_dynamic_source
 {
-    echo_local_level 2 configureplus_dynamic_source ..
+    echo_local_level 2 configureplus_dynamic_source - begin ..
 
-    echo_local source $CONFIGUREPLUS_DIR_OUT/dynamic.bash
+    echo_local_level 2 source $CONFIGUREPLUS_DIR_OUT/dynamic.bash
 
     source $CONFIGUREPLUS_DIR_OUT/dynamic.bash
 
-    echo_local_level 2 configureplus_dynamic_source .. end
+    echo_local_level 2 configureplus_dynamic_source - .. end
 }
 
 function configureplus_globalvars_setup
 {
-    echo_local_level 2 configureplus_globalvars_setup .. 
+    echo_local_level 2 configureplus_globalvars_setup - begin .. 
 
     # global
 
-    echo_local "configureplus_globalvars_setup - init session vars from global (overwrite) (source=$CONFIGUREPLUS_DIR_OUT/global/)"
+    echo_local_level 2 "configureplus_globalvars_setup - init session vars from global (overwrite) (source=$CONFIGUREPLUS_DIR_OUT/global/)"
 
-    FIND_DIR=$CONFIGUREPLUS_DIR_OUT/global/
+    local FIND_DIR=$CONFIGUREPLUS_DIR_OUT/global/
 
-    echo_local
-    
-    for VARFILE in $(find $CONFIGUREPLUS_DIR_OUT/global/* -type f); do
+    for VARFILE in $(find ${FIND_DIR}* -type f); do
 
         warn_local VARFILE=$VARFILE
         
@@ -1059,24 +1076,11 @@ function configureplus_globalvars_setup
 	    
 	    warn_local configureplus_globalvars_setup - overwriting "$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/$VARFILE_BASE"
 
-            local DIRNAME=$(dirname $CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/$VARFILE_BASE)
+            configureplus_filepath_dir_create $CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/$VARFILE_BASE
 
-            if [[ ! -d $DIRNAME ]]; then
+	    echo_local_level 3 cp "$VARFILE" "$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/$VARFILE_BASE"
 
-                mkdir -p $DIRNAME
-
-                if [[ ! -d $DIRNAME ]]; then
-
-                    echo "*FATAL*: Could not create $DIRNAME with: mkdir -p $DIRNAME" >&2
-
-                    exit 99
-                fi
-
-            fi
-            
-            warn_local cp "'$VARFILE'" "'$DIRNAME'"
-	    
-            cp "$VARFILE" "$DIRNAME"
+            cp "$VARFILE" "$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/$VARFILE_BASE"
 	    
 	fi
 
@@ -1088,7 +1092,7 @@ function configureplus_globalvars_setup
 
     VARS="PWD SESSION VERSION DIR_CONFIG DIR_OUT DIR_OUT_SESSIONS"
 
-    echo_local configureplus_globalvars_setup - reset VARS=$VARS
+    echo_local_level 2 configureplus_globalvars_setup - reset VARS=$VARS
 
     local FIND_DIR=$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/
     
@@ -1098,26 +1102,13 @@ function configureplus_globalvars_setup
 
 	VARNAME_FULL=$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/CONFIGUREPLUS/$VARNAME
 
-	echo_local configureplus_globalvars_setup - Test $VARNAME_FULL = ${!VARNAME_}
+	echo_local_level 2 configureplus_globalvars_setup - Test $VARNAME_FULL = ${!VARNAME_}
 
 	if [ ! -f "$VARNAME_FULL" ]; then
 	    
-	    echo_local configureplus_globalvars_setup - overwrite $VARNAME_FULL = ${!VARNAME_}
+	    echo_local_level 2 configureplus_globalvars_setup - overwrite $VARNAME_FULL = ${!VARNAME_}
 
-            local DIRNAME=$(dirname $VARNAME_FULL)
-
-            if [[ ! -d $DIRNAME ]]; then
-
-                mkdir -p $DIRNAME
-
-                if [[ ! -d $DIRNAME ]]; then
-
-                    echo "*FATAL*: Could not create $DIRNAME with: mkdir -p $DIRNAME" >&2
-
-                    exit 99
-                fi
-
-            fi
+            configureplus_filepath_dir_create $VARNAME_FULL
 
 	    >$VARNAME_FULL               echo ${!VARNAME_}
 
@@ -1133,13 +1124,13 @@ function configureplus_globalvars_setup
 
 function configureplus_summary
 {
-    echo_local PWD=$PWD
+    echo_local_level 2 PWD=$PWD
     
-    echo_local_level 2 configureplus_summary "(find $CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/*|sort)":
+    echo_local_level 2 configureplus_summary - "(find $CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/*|sort)":
 
-    FIND_DIR=$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/
+    local FIND_DIR=$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/
 
-    for VARFILE in $(find $CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/* -type f|sort); do
+    for VARFILE in $(find ${FIND_DIR}* -type f|sort); do
 
 	BASENAME=$(basename $VARFILE)
         
@@ -1153,9 +1144,8 @@ function configureplus_summary
 
 	DOCFILE=$DOCFILE_GLOBAL
 
-	echo_local DOCFILE=$DOCFILE
+	echo_local_level 2 DOCFILE=$DOCFILE
 
-#	echo_local DOCFILE_GLOBAL=$DOCFILE_GLOBAL
 
 	
 	if [ -f $DOCFILE ]; then
@@ -1182,9 +1172,9 @@ function configureplus_generate_configure_global_mk
 
     echo >>$CONFIGUREPLUS_DIR_OUT/global.mk
 
-    FIND_DIR=$CONFIGUREPLUS_DIR_OUT/global/
+    local FIND_DIR=$CONFIGUREPLUS_DIR_OUT/global/
     
-    for VARFILE in $(find $CONFIGUREPLUS_DIR_OUT/global/* -type f); do
+    for VARFILE in $(find ${FIND_DIR}* -type f); do
 
 	BASENAME=$(basename $VARFILE)
 
@@ -1194,7 +1184,7 @@ function configureplus_generate_configure_global_mk
 
 	DOCFILE=$CONFIGUREPLUS_DIR_OUT/doc/$VARFILE_BASE
 
-        echo_local DOCFILE=$DOCFILE
+        echo_local_level 2 DOCFILE=$DOCFILE
 
 	if [ -f $DOCFILE ]; then
 
@@ -1219,9 +1209,9 @@ function configureplus_generate_configure_session_mk
 
     echo >>$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION.mk
 
-    FIND_DIR=$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/
+    local FIND_DIR=$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/
     
-    for VARFILE in $(find $CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/* -type f|sort); do
+    for VARFILE in $(find ${FIND_DIR}* -type f|sort); do
 
 	BASENAME=$(basename $VARFILE)
 
@@ -1232,7 +1222,7 @@ function configureplus_generate_configure_session_mk
 
 	DOCFILE=$CONFIGUREPLUS_DIR_OUT/doc/$VARFILE_BASE
 
-        echo_local DOCFILE=$DOCFILE
+        echo_local_level 2 DOCFILE=$DOCFILE
 
 	if [ -f $DOCFILE ]; then
 
@@ -1256,9 +1246,9 @@ function configureplus_generate_configure_global_bash
 
     echo >>$CONFIGUREPLUS_DIR_OUT/global.bash
 
-    FIND_FILE=$CONFIGUREPLUS_DIR_OUT/global/
+    local FIND_DIR=$CONFIGUREPLUS_DIR_OUT/global/
     
-    for VARFILE in $(find $CONFIGUREPLUS_DIR_OUT/global/* -type f); do
+    for VARFILE in $(find ${FIND_DIR}* -type f); do
 
 	BASENAME=$(basename $VARFILE)
 
@@ -1269,7 +1259,7 @@ function configureplus_generate_configure_global_bash
 
 	DOCFILE=$CONFIGUREPLUS_DIR_OUT/doc/$VARFILE_BASE
 
-        	echo_local DOCFILE=$DOCFILE
+        	echo_local_level 2 DOCFILE=$DOCFILE
 
 	if [ -f $DOCFILE ]; then
 
@@ -1295,9 +1285,9 @@ function configureplus_generate_configure_global_bash_local
 
     echo >>$CONFIGUREPLUS_DIR_OUT/global.bash_local
 
-    FIND_DIR=$CONFIGUREPLUS_DIR_OUT/global/
+    local FIND_DIR=$CONFIGUREPLUS_DIR_OUT/global/
     
-    for VARFILE in $(find $CONFIGUREPLUS_DIR_OUT/global/* -type f); do
+    for VARFILE in $(find ${FIND_DIR}* -type f); do
 
 	BASENAME=$(basename $VARFILE)
 
@@ -1307,7 +1297,7 @@ function configureplus_generate_configure_global_bash_local
         
 	DOCFILE=$CONFIGUREPLUS_DIR_OUT/doc/$VARFILE_BASE
 
-        	echo_local DOCFILE=$DOCFILE
+        	echo_local_level 2 DOCFILE=$DOCFILE
 
 	if [ -f $DOCFILE ]; then
 
@@ -1337,9 +1327,9 @@ function configureplus_generate_configure_global_json
     echo "  {" >>$CONFIGUREPLUS_DIR_OUT/global.json
 
 
-    FIND_DIR=$CONFIGUREPLUS_DIR_OUT/global/
+    local FIND_DIR=$CONFIGUREPLUS_DIR_OUT/global/
     
-    local ARRAY=( $(find $CONFIGUREPLUS_DIR_OUT/global/* -type f) )
+    local ARRAY=( $(find ${FIND_DIR}* -type f) )
 
     local ARRAY_LEN=${#ARRAY[@]}
 
@@ -1392,9 +1382,9 @@ function configureplus_generate_configure_session_bash
 
     echo >>$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION.bash
 
-    FIND_DIR=$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/
+    local FIND_DIR=$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/
     
-    for VARFILE in $(find $CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/* -type f|sort); do
+    for VARFILE in $(find ${FIND_DIR}* -type f|sort); do
 
 	BASENAME=$(basename $VARFILE)
 
@@ -1402,11 +1392,11 @@ function configureplus_generate_configure_session_bash
 
         VARFILE_KEY=${VARFILE_BASE//\//_}
 
-        echo_local configureplus_generate_configure_session_bash - VARFILE_KEY=$VARFILE_KEY
+        echo_local_level 2 configureplus_generate_configure_session_bash - VARFILE_KEY=$VARFILE_KEY
         
 	DOCFILE=$CONFIGUREPLUS_DIR_OUT/doc/$VARFILE_BASE
 
-        	echo_local DOCFILE=$DOCFILE
+        	echo_local_level 2 DOCFILE=$DOCFILE
 
 	if [ -f $DOCFILE ]; then
 
@@ -1430,9 +1420,9 @@ function configureplus_generate_configure_session_bash_local
 
     echo >>$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION.bash_local
 
-    FIND_DIR=$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/
+    local FIND_DIR=$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/
     
-    for VARFILE in $(find $CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/* -type f|sort); do
+    for VARFILE in $(find ${FIND_DIR}* -type f|sort); do
 
 	BASENAME=$(basename $VARFILE)
 
@@ -1442,8 +1432,8 @@ function configureplus_generate_configure_session_bash_local
 
 	DOCFILE=$CONFIGUREPLUS_DIR_OUT/doc/$VARFILE_BASE
 
-        #echo_local $VARFILE .... ENTRY
-	echo_local DOCFILE=$DOCFILE
+        #echo_local_level 2 $VARFILE .... ENTRY
+	echo_local_level 2 DOCFILE=$DOCFILE
 
 	if [ -f $DOCFILE ]; then
 
@@ -1469,11 +1459,11 @@ function configureplus_generate_configure_session_json
 
     echo "  {" >>$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION.json
 
-    FIND_DIR=$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/
+    local FIND_DIR=$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/
 
-    echo_local configureplus_generate_configure_session_json - FIND_DIR=$FIND_DIR
+    echo_local_level 2 configureplus_generate_configure_session_json - FIND_DIR=$FIND_DIR
 
-    local ARRAY=($(find $CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION/* -type f|sort))
+    local ARRAY=($(find ${FIND_DIR}* -type f|sort))
 
     local ARRAY_LEN=${#ARRAY[@]}
 
@@ -1481,7 +1471,7 @@ function configureplus_generate_configure_session_json
 
     for VARFILE in ${ARRAY[@]}; do
 
-        echo_local configureplus_generate_configure_session_json - VARFILE=$VARFILE
+        echo_local_level 2 configureplus_generate_configure_session_json - VARFILE=$VARFILE
 
 	BASENAME=$(basename $VARFILE)
 
@@ -1489,7 +1479,7 @@ function configureplus_generate_configure_session_json
 
         VARFILE_KEY=${VARFILE_BASE//\//_}
 
-        echo_local configureplus_generate_configure_session_json - VARFILE_KEY=$VARFILE_KEY
+        echo_local_level 2 configureplus_generate_configure_session_json - VARFILE_KEY=$VARFILE_KEY
 
         COMMA=
 
@@ -1532,7 +1522,7 @@ function configureplus_generate
 
         cd $target_dir
 
-        echo_local Detected CONFIGUREPLUS_OPTION_FLAG_GLOBAL, switched to PWD=$PWD
+        echo_local_level 2 Detected CONFIGUREPLUS_OPTION_FLAG_GLOBAL, switched to PWD=$PWD
 
     fi
 
@@ -1577,9 +1567,40 @@ function configureplus_setup
     echo_local_level 2 configureplus_setup .. done
 }
 
+
+function configureplus_setup_bootstrap
+{
+    echo_local_level 2 configureplus_setup_bootstrap - CONFIGUREPLUS_DEBUG=$CONFIGUREPLUS_DEBUG 
+
+    echo_local_level 2 configureplus_setup_bootstrap - Checking ~/.config/$SCRIPT_NAME/$CONFIGUREPLUS_DIR_OUT/
+
+
+    echo_local_level 2 configureplus_setup_bootstrap - configureplus_dir_config_setup
+    
+    configureplus_dir_config_setup
+
+    echo_local_level 2 configureplus_setup_bootstrap - configureplus_session_identify ..
+
+    configureplus_session_identify
+
+    echo_local_level 2 configureplus_setup_bootstrap - configureplus_session_directory_setup ..
+
+    configureplus_session_directory_setup
+
+
+    echo_local_level 2 configureplus_setup_bootstrap - configureplus_globalvars_setup ..
+
+    configureplus_globalvars_setup
+
+}
+
 # Main script logic
 
-if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+if [[ "$CONFIGUREPLUS_INVOCATION" == "RUN" ]]; then
+
+    echo_local_level 1 Main script logic, CONFIGUREPLUS_DEBUG=$CONFIGUREPLUS_DEBUG
+
+    echo_local_level 2                                    PWD=$PWD
 
     # Note that we use `"$@"' to let each command-line parameter expand to a 
     # separate word. The quotes around `$@' are essential!
@@ -1654,18 +1675,17 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
         esac
     done
 
-    echo_local "Remaining getopt arguments:"
+    echo_local_level 2 "Remaining getopt arguments:"
 
     for arg;
     do 
-        echo_local '    - ARG:  '"\`$arg'" ; 
+        echo_local_level 2 '    - ARG:  '"\`$arg'" ; 
     done
 
 
 
 
 
-    warn_local CONFIGUREPLUS_DEBUG=$CONFIGUREPLUS_DEBUG
 
 
     # Default command is now 'generate'
@@ -1708,7 +1728,7 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
         bootstrap)
             # Start from scratch and init to baseline
 
-            configureplus_bootstrap
+            configureplus_setup_bootstrap
             ;;
         
         set)
@@ -1749,7 +1769,7 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
             ;;
     esac
 else
-    echo "Script is being sourced"
+    echo "Script is being sourced, will not invoke main."
 fi
 
 
