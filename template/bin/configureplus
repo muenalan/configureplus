@@ -667,10 +667,6 @@ if [[ "$CONFIGUREPLUS_INVOCATION" == "RUN" ]]; then
 
 
 
-
-
-
-
     # Default command is now 'generate'
     COMMAND=${1:-generate}
 

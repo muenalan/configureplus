@@ -1,20 +1,28 @@
 #!/bin/bash
 
 # Script version
-CONFIGUREPLUS_VERSION=0.16.2
+CONFIGUREPLUS_VERSION=0.16.3
 
 # COMMONS ENV
 : ${CONFIGUREPLUS_DEBUG:=0}
+
 CONFIGUREPLUS_PWD=$PWD
+
 CONFIGUREPLUS_DIR_OUT=.$SCRIPT_NAME
+
 CONFIGUREPLUS_DIR_OUT_SESSIONS=$CONFIGUREPLUS_DIR_OUT/session
+
 CONFIGUREPLUS_ZERO_ARG_BASENAME=$(basename $0)
+
 CONFIGUREPLUS_DIR_CONFIG=~/.config/$SCRIPT_NAME
 
-CONFIGUREPLUS_OPTION_FLAG_HOME=false
-CONFIGUREPLUS_OPTION_FLAG_GLOBAL=false
-CONFIGUREPLUS_OPTION_FLAG_DETECT_OS=false
+CONFIGUREPLUS_DIR_CONFIG_FULL=${CONFIGUREPLUS_DIR_CONFIG}/$CONFIGUREPLUS_DIR_OUT
 
+CONFIGUREPLUS_OPTION_FLAG_HOME=false
+
+CONFIGUREPLUS_OPTION_FLAG_GLOBAL=false
+
+CONFIGUREPLUS_OPTION_FLAG_DETECT_OS=false
 
 # functions
 
@@ -47,15 +55,22 @@ function echo_local_level
 function warn_local
 {
    if [ "$CONFIGUREPLUS_DEBUG" -ge "1" ]; then
+
     >&2 echo "[WARN warn_local, $CONFIGUREPLUS_ZERO_ARG_BASENAME] : {" $@ "}"
+
    fi
+}
+
+function error_local
+{
+    >&2 echo "[ERROR error_local, $CONFIGUREPLUS_ZERO_ARG_BASENAME] : {" $@ "}"
 }
 
 function configureplus_env
 {
-    warn_local Sourcing ~/.config/$SCRIPT_NAME/$CONFIGUREPLUS_DIR_OUT/global.bash_local
+    warn_local Sourcing ${CONFIGUREPLUS_DIR_CONFIG_FULL}/global.bash_local
     
-    source ~/.config/$SCRIPT_NAME/$CONFIGUREPLUS_DIR_OUT/global.bash_local
+    source ${CONFIGUREPLUS_DIR_CONFIG_FULL}/global.bash_local
 
     set|perl -ne 'print if /^CONFIGURE(PLUS)?_/;'
 
@@ -67,9 +82,9 @@ function configureplus_status
 {
     echo configureplus_status: CONFIGUREPLUS_DEBUG=$CONFIGUREPLUS_DEBUG 
 
-    warn_local Showing ~/.config/$SCRIPT_NAME/$CONFIGUREPLUS_DIR_OUT/
+    warn_local Showing ${CONFIGUREPLUS_DIR_CONFIG_FULL}/
     
-    tree ~/.config/$SCRIPT_NAME/$CONFIGUREPLUS_DIR_OUT/
+    tree ${CONFIGUREPLUS_DIR_CONFIG_FULL}/
 
     if [ -d "$CONFIGUREPLUS_DIR_OUT/" ]; then
 
@@ -99,7 +114,7 @@ function configureplus_status
 
     warn_local '$CONFIGUREPLUS_DIR_OUT_SESSION=' $CONFIGUREPLUS_DIR_OUT_SESSIONS
     
-        FOLDERS=$(echo ~/.config/$SCRIPT_NAME/$CONFIGUREPLUS_DIR_OUT/global ~/.config/$SCRIPT_NAME/$CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION $CONFIGUREPLUS_DIR_OUT/global $CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION)
+        FOLDERS=$(echo ${CONFIGUREPLUS_DIR_CONFIG_FULL}/global ${CONFIGUREPLUS_DIR_CONFIG_FULL}_SESSIONS/$CONFIGUREPLUS_SESSION $CONFIGUREPLUS_DIR_OUT/global $CONFIGUREPLUS_DIR_OUT_SESSIONS/$CONFIGUREPLUS_SESSION)
 
         for FOLDER in $FOLDERS; do
 
@@ -190,7 +205,7 @@ function configureplus_fname
 
 	warn_local "configureplus_fname : \$CONFIGUREPLUS_OPTION_FLAG_HOME is true; setting FNAME to home-global var.."
 
-	FNAME_PRE=~/.config/$SCRIPT_NAME/$CONFIGUREPLUS_DIR_OUT
+	FNAME_PRE=${CONFIGUREPLUS_DIR_CONFIG_FULL}
 
     fi
 
@@ -356,8 +371,6 @@ function configureplus_sessions_list
     echo_local_level 2 Currently CONFIGUREPLUS_SESSION=$CONFIGUREPLUS_SESSION
 
 }
-
-
 
 # defaults
 
@@ -1002,7 +1015,91 @@ function configureplus_setup_bootstrap
 {
     echo_local_level 2 configureplus_setup_bootstrap - CONFIGUREPLUS_DEBUG=$CONFIGUREPLUS_DEBUG 
 
-    echo_local_level 2 configureplus_setup_bootstrap - Checking ~/.config/$SCRIPT_NAME/$CONFIGUREPLUS_DIR_OUT/
+    echo_local_level 2 configureplus_setup_bootstrap - Checking ${CONFIGUREPLUS_DIR_CONFIG_FULL}/
+
+
+    if [ ! -d "$CONFIGUREPLUS_DIR_CONFIG_FULL" ]; then
+
+        export CONFIGUREPLUS_DIR_CONFIG_FULL_EMPTY=1
+
+        error_local "configureplus_dir_config_setup - could not find $CONFIGUREPLUS_DIR_CONFIG_FULL"
+
+        exit 10
+    fi
+
+
+
+
+    echo_local_level 2 configureplus_setup_bootstrap - Checking standard files 'dynamic.bash' is present, and currentsession.{mk,bash} is uptodate
+
+    local REQUIRED_DIRS=( global global/CONFIGURE global/CONFIGUREPLUS ) # dont put 'session' here, it is handled somewhere else
+
+    echo_local REQUIRED_DIRS="${REQUIRED_DIRS[@]}"
+
+    for DIR in "${REQUIRED_DIRS[@]}"; do
+
+        echo_local DIR="$DIR"
+
+        if [ ! -d "${CONFIGUREPLUS_DIR_CONFIG_FULL}/$DIR" ]; then
+
+            error_local "configureplus_dir_config_setup - could not find *required* DIR=$DIR in ${CONFIGUREPLUS_DIR_CONFIG_FULL}"
+
+            exit 5
+        fi
+
+        if [ ! -d "${CONFIGUREPLUS_DIR_OUT}/$DIR" ]; then
+
+            error_local "configureplus_dir_config_setup - create/fill *required* DIR=$DIR in ${CONFIGUREPLUS_DIR_OUT}"
+
+            echo_local_level 2 COMMAND: rsync -ru "${CONFIGUREPLUS_DIR_CONFIG_FULL}/$DIR" $(dirname "${CONFIGUREPLUS_DIR_OUT}/$DIR")
+
+            rsync -ru "${CONFIGUREPLUS_DIR_CONFIG_FULL}/$DIR" $(dirname "${CONFIGUREPLUS_DIR_OUT}/$DIR")
+
+            if [ ! -d "${CONFIGUREPLUS_DIR_OUT}/$DIR" ]; then
+
+                error_local "configureplus_dir_config_setup - could not setup *required* DIR=$DIR in ${CONFIGUREPLUS_DIR_OUT}"
+
+                exit 6
+            fi
+        fi
+
+    done
+        
+    local REQUIRED_FILES=( "dynamic.bash" "currentsession.mk" "currentsession.bash" )
+
+    echo_local REQUIRED_FILES="${REQUIRED_FILES[@]}"
+
+    local FILES_DIR=.configurelplus
+
+    for FILE in "${REQUIRED_FILES[@]}"; do
+
+        echo_local FILE="$FILE"
+
+        if [ ! -f "${CONFIGUREPLUS_DIR_CONFIG_FULL}/$FILE" ]; then
+
+            error_local "configureplus_dir_config_setup - could not find *required* FILE=$FILE in ${CONFIGUREPLUS_DIR_CONFIG_FULL}"
+
+            exit 10
+        fi
+
+        if [ ! -f "${CONFIGUREPLUS_DIR_OUT}/$FILE" ]; then
+
+            warn_local "configureplus_dir_config_setup - could not find *required* FILE=${CONFIGUREPLUS_DIR_OUT}/$FILE"
+
+            echo COMMAND: cp "${CONFIGUREPLUS_DIR_CONFIG_FULL}/$FILE" "${CONFIGUREPLUS_DIR_OUT}/$FILE"
+
+            cp "${CONFIGUREPLUS_DIR_CONFIG_FULL}/$FILE" "${CONFIGUREPLUS_DIR_OUT}/$FILE"
+
+            if [ ! -f "${CONFIGUREPLUS_DIR_CONFIG_FULL}/$FILE" ]; then
+
+                error_local "configureplus_dir_config_setup - could not setup *required* FILE=$FILE in ${CONFIGUREPLUS_DIR_OUT} (from ${CONFIGUREPLUS_DIR_CONFIG_FULL})"
+
+                exit 20
+            fi
+
+        fi
+
+    done
 
 
     echo_local_level 2 configureplus_setup_bootstrap - configureplus_dir_config_setup
@@ -1016,7 +1113,6 @@ function configureplus_setup_bootstrap
     echo_local_level 2 configureplus_setup_bootstrap - configureplus_session_directory_setup ..
 
     configureplus_session_directory_setup
-
 
     echo_local_level 2 configureplus_setup_bootstrap - configureplus_globalvars_setup ..
 

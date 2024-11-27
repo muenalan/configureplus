@@ -11,6 +11,7 @@ install:
 	@mkdir -p $(CONFIGURE_DIR_OUTPUT)/$(CONFIGURE_OSTYPE)/$(CONFIGURE_PKGNAME)/usr/local/lib   && rsync -ru --progress $(CONFIGURE_DIR_TEMPLATE)/lib/* $(CONFIGURE_DIR_OUTPUT)/$(CONFIGURE_OSTYPE)/$(CONFIGURE_PKGNAME)/usr/local/lib/
 	@mkdir -p $(CONFIGURE_DIR_OUTPUT)/$(CONFIGURE_OSTYPE)/$(CONFIGURE_PKGNAME)/usr/local/var   && rsync -ru --progress $(CONFIGURE_DIR_TEMPLATE)/var/* $(CONFIGURE_DIR_OUTPUT)/$(CONFIGURE_OSTYPE)/$(CONFIGURE_PKGNAME)/usr/local/var/
 	@mkdir -p $(CONFIGURE_DIR_OUTPUT)/$(CONFIGURE_OSTYPE)/$(CONFIGURE_PKGNAME)/usr/local/share && rsync -ru --progress $(CONFIGURE_DIR_TEMPLATE)/share/* $(CONFIGURE_DIR_OUTPUT)/$(CONFIGURE_OSTYPE)/$(CONFIGURE_PKGNAME)/usr/local/share/
+	@mkdir -p $(CONFIGURE_DIR_OUTPUT)/$(CONFIGURE_OSTYPE)/$(CONFIGURE_PKGNAME)/home && rsync -ru --progress $(CONFIGURE_DIR_TEMPLATE)/home/username $(CONFIGURE_DIR_OUTPUT)/$(CONFIGURE_OSTYPE)/$(CONFIGURE_PKGNAME)/home/
 	@mkdir -p ~/.config/$(CONFIGURE_PKGNAME)/
 	@rsync -ru --progress .configureplus ~/.config/$(CONFIGURE_PKGNAME)/
 	cd $(CONFIGURE_DIR_OUTPUT)/$(CONFIGURE_OSTYPE) && CONFIGUREPLUS_BASEDIR=configureplus/usr/local configureplus/usr/local/bin/configureplus

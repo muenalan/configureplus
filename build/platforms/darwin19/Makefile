@@ -15,7 +15,8 @@ install-systemwide:
 	make -B install-systemwide-share
 	make -B install-systemwide-doc
 	-mkdir -p ~/.config/$(CONFIGURE_PKGNAME)/
-	-cp -r .configureplus ~/.config/$(CONFIGURE_PKGNAME)/
+	rsync -ru --progress $(CONFIGURE_PKGNAME)/home/username/.config/ ~/.config/
+	rsync -ru --progress .configureplus ~/.config/$(CONFIGURE_PKGNAME)/
 
 status:
 	CONFIGURE_BASH_PROFILE_FILE="$(shell cat .configureplus/session/darwin19/CONFIGURE/BASH_PROFILE_FILE)"

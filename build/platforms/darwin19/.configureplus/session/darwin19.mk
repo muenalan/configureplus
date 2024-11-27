@@ -1,5 +1,5 @@
 
-# Generated with configureplus (CONFIGUREPLUS_VERSION=0.16.2, CONFIGUREPLUS_PWD=/Users/muenalan/git-workdirs/github.com/muenalan/bash/configureplus/build/platforms/darwin19)
+# Generated with configureplus (CONFIGUREPLUS_VERSION=0.16.3, CONFIGUREPLUS_PWD=/Users/muenalan/git-workdirs/github.com/muenalan/bash/configureplus/build/platforms/darwin19)
 # Note: space before a comment are part of a variable
 
 CONFIGURE_BASH_PROFILE_FILE=$(shell cat .configureplus/session/darwin19/CONFIGURE/BASH_PROFILE_FILE)
