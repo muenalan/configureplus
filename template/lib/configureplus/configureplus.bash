@@ -90,22 +90,27 @@ function configureplus_status
 
         tree $CONFIGUREPLUS_DIR_OUT/
 
+    else
+	
+	error_local "CONFIGUREPLUS_DIR_OUT=$CONFIGUREPLUS_DIR_OUT is empty. Need to change dir, or create first ?"
+
+	exit 22
     fi
 
     if [[ ! "$CONFIGUREPLUS_DIR_OUT_SESSIONS" ]]; then
 
-	warn_local "CONFIGUREPLUS_DIR_OUT_SESSIONS=$CONFIGUREPLUS_DIR_OUT_SESSIONS is empty"
+	error_local "CONFIGUREPLUS_DIR_OUT_SESSIONS=$CONFIGUREPLUS_DIR_OUT_SESSIONS is empty"
 
-	return;
+	exit 33
     fi
 
     configureplus_session_identify
     
     if [[ ! "$CONFIGUREPLUS_SESSION" ]]; then
 
-	warn_local "CONFIGUREPLUS_SESSION=$CONFIGUREPLUS_SESSION is empty"
+	error_local "CONFIGUREPLUS_SESSION=$CONFIGUREPLUS_SESSION is empty"
 
-	return;
+	exit 44
     fi
 
     echo ""
