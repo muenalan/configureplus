@@ -15,20 +15,21 @@ install-systemwide:
 	make -B install-systemwide-share
 	make -B install-systemwide-doc
 	-mkdir -p ~/.config/$(CONFIGURE_PKGNAME)/
-	-cp -r .configureplus ~/.config/$(CONFIGURE_PKGNAME)/
+	rsync -ru --progress $(CONFIGURE_PKGNAME)/home/username/.config/ ~/.config/
+	rsync -ru --progress .configureplus ~/.config/$(CONFIGURE_PKGNAME)/
 
 status:
-	CONFIGURE_BASH_PROFILE_FILE="$(shell cat .configureplus/session/linux-gnu/CONFIGURE/BASH_PROFILE_FILE)"
-	CONFIGURE_FLAG_TOOL_BTEST="$(shell cat .configureplus/session/linux-gnu/CONFIGURE/FLAG_TOOL_BTEST)"
-	CONFIGURE_MKTEMP="$(shell cat .configureplus/session/linux-gnu/CONFIGURE/MKTEMP)"
-	CONFIGURE_OSTYPE="$(shell cat .configureplus/session/linux-gnu/CONFIGURE/OSTYPE)"
-	CONFIGURE_TIMESTAMP="$(shell cat .configureplus/session/linux-gnu/CONFIGURE/TIMESTAMP)"
-	CONFIGUREPLUS_DIR_CONFIG="$(shell cat .configureplus/session/linux-gnu/CONFIGUREPLUS/DIR_CONFIG)"
-	CONFIGUREPLUS_DIR_OUT="$(shell cat .configureplus/session/linux-gnu/CONFIGUREPLUS/DIR_OUT)"
-	CONFIGUREPLUS_DIR_OUT_SESSIONS="$(shell cat .configureplus/session/linux-gnu/CONFIGUREPLUS/DIR_OUT_SESSIONS)"
-	CONFIGUREPLUS_PWD="$(shell cat .configureplus/session/linux-gnu/CONFIGUREPLUS/PWD)"
-	CONFIGUREPLUS_SESSION="$(shell cat .configureplus/session/linux-gnu/CONFIGUREPLUS/SESSION)"
-	CONFIGUREPLUS_VERSION="$(shell cat .configureplus/session/linux-gnu/CONFIGUREPLUS/VERSION)"
+	CONFIGURE_BASH_PROFILE_FILE="$(shell cat .configureplus/session/darwin19/CONFIGURE/BASH_PROFILE_FILE)"
+	CONFIGURE_FLAG_TOOL_BTEST="$(shell cat .configureplus/session/darwin19/CONFIGURE/FLAG_TOOL_BTEST)"
+	CONFIGURE_MKTEMP="$(shell cat .configureplus/session/darwin19/CONFIGURE/MKTEMP)"
+	CONFIGURE_OSTYPE="$(shell cat .configureplus/session/darwin19/CONFIGURE/OSTYPE)"
+	CONFIGURE_TIMESTAMP="$(shell cat .configureplus/session/darwin19/CONFIGURE/TIMESTAMP)"
+	CONFIGUREPLUS_DIR_CONFIG="$(shell cat .configureplus/session/darwin19/CONFIGUREPLUS/DIR_CONFIG)"
+	CONFIGUREPLUS_DIR_OUT="$(shell cat .configureplus/session/darwin19/CONFIGUREPLUS/DIR_OUT)"
+	CONFIGUREPLUS_DIR_OUT_SESSIONS="$(shell cat .configureplus/session/darwin19/CONFIGUREPLUS/DIR_OUT_SESSIONS)"
+	CONFIGUREPLUS_PWD="$(shell cat .configureplus/session/darwin19/CONFIGUREPLUS/PWD)"
+	CONFIGUREPLUS_SESSION="$(shell cat .configureplus/session/darwin19/CONFIGUREPLUS/SESSION)"
+	CONFIGUREPLUS_VERSION="$(shell cat .configureplus/session/darwin19/CONFIGUREPLUS/VERSION)"
 	echo CONFIGURE_PKGNAME=$(CONFIGURE_PKGNAME)
 
 FILES=$(wildcard $(PWD)/$(DIR_TEMPLATE)/lib/$(CONFIGURE_PKGNAME)/*) 
