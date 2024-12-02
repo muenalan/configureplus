@@ -4,10 +4,10 @@
   {
    "CONFIGURE_BASH_PROFILE_FILE" : "/Users/muenalan/.bash_profile",
    "CONFIGURE_FLAG_TOOL_BTEST" : "/usr/local/bin/btest",
-   "CONFIGURE_MKTEMP" : "/var/folders/px/ctnmlq5n5gbf154mj25wzdxh0000gn/T/tmp.5dczwVbJ",
+   "CONFIGURE_MKTEMP" : "/var/folders/px/ctnmlq5n5gbf154mj25wzdxh0000gn/T/tmp.1kkGcWqc",
    "CONFIGURE_OSTYPE" : "darwin19",
    "CONFIGURE_PKGNAME" : "configureplus",
-   "CONFIGURE_TIMESTAMP" : "Wed Nov 27 13:42:09 CET 2024",
+   "CONFIGURE_TIMESTAMP" : "Wed Nov 27 14:27:42 CET 2024",
    "CONFIGUREPLUS_DIR_CONFIG" : "/Users/muenalan/.config/",
    "CONFIGUREPLUS_DIR_OUT" : ".configureplus",
    "CONFIGUREPLUS_DIR_OUT_SESSIONS" : ".configureplus/session",

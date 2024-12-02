@@ -359,7 +359,14 @@ Moreover, a global fallback for variables is available (~/.config/$SCRIPT_NAME/.
  $ CONFIGUREPLUS_SESSION=local1 configureplus set ALPHA 123   # set variable ALPHA in session 'local1'
  $ CONFIGUREPLUS_SESSION=local1 configureplus get ALPHA      
  123
- 
+ $ configureplus set BETA aaa 
+ $ configureplus add BETA bbb
+ $ configureplus add BETA ccc
+ $ cat MYFILE.txt | configureplus add BETA
+   .. adding line1 
+   .. adding line2
+   .. adding line3 
+
 # Description
 
 Architecture dependency is traditionally detected with an universal **configure** tool. This packages provide similar means, and is not intended to be compatible to the **autoconf** chain. However, it solves a similar generic problem, but beeing more granular and more friendly.

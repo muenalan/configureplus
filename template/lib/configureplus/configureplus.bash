@@ -280,12 +280,6 @@ function configureplus_add
 
     fi
     
-    if [ -z "$2" ]; then
-
-        echo_local_level 2 "ARGUMENT_MISSING at pos 2: configureplus_add requires value argument."
-
-    fi
-
     local FNAME=$(configureplus_fname $1)
 
     warn_local "configureplus_add : decided on FNAME=$FNAME"
@@ -294,17 +288,44 @@ function configureplus_add
 
     configureplus_filepath_dir_create $FNAME
 
-    local OLD_VALUE=""
+    if [ -z "$2" ]; then
 
-    if [[ -f "$FNAME" ]]; then
+        echo_local_level 2 "ARGUMENT_MISSING at pos 2: configureplus_add requires value argument."
 
-       OLD_VALUE=`cat $FNAME`
+        echo_local "No VALUE given, setting from PIPE.."
 
+        while IFS= read -r line; do
+
+            local OLD_VALUE=""
+
+            if [[ -f "$FNAME" ]]; then
+
+                OLD_VALUE=`cat $FNAME`
+
+            fi
+
+            echo_local_level 2 Adding to $FNAME value \"$1\" "(line \"$line\")"
+
+            >$FNAME echo "$OLD_VALUE:$line"
+
+        done
+    
+    else
+        
+
+        local OLD_VALUE=""
+
+        if [[ -f "$FNAME" ]]; then
+
+            OLD_VALUE=`cat $FNAME`
+
+        fi
+        
+        echo_local_level 2 Adding to $FNAME value \"$1\" "(all values \"$*\")"
+
+        >$FNAME echo "$OLD_VALUE:$*"
     fi
     
-    echo_local_level 2 Adding to $FNAME value \"$1\" "(all values \"$*\")"
-
-    >$FNAME echo "$OLD_VALUE:$*"
 }
 
 function configureplus_remove
