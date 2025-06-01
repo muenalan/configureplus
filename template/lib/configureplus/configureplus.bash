@@ -160,6 +160,8 @@ function configureplus_status
            $key = "LOCAL-GLOBAL" if /global/;
          }
 
+#         warn "LOAD FILE: ", $f, " (", $key ,") ", " = ", $val;
+
          $href->{ $f->basename }->{ $key } = $val; 
 
          $field_fmt="%-45s";
@@ -179,14 +181,20 @@ function configureplus_status
          return $str;
          }
 
+         our @k = qw(HOME-GLOBAL HOME-SESSION LOCAL-GLOBAL LOCAL-SESSION);
+
          END 
          { 
-            @k = qw(HOME-GLOBAL HOME-SESSION LOCAL-GLOBAL LOCAL-SESSION);
+            my @header = @k;
 
-            printf "$field_fmt %s\n", "VARNAME", join( " ", map { $_="$_ ($ENV{CONFIGUREPLUS_SESSION})" if /SESSION/; sprintf "$field_fmt", $_||"<empty>" } @k ), "\n";
+            printf "$field_fmt %s\n", "VARNAME", join( " ", map { $_ = "$_ ($ENV{CONFIGUREPLUS_SESSION})" if /SESSION/; sprintf "$field_fmt", $_||"<empty>" } @header ), "\n";
  
             for my $varname (sort keys %$href) 
-            { 
+            {
+#               warn "varname=",$varname, ", keys=", join( ", ", keys %$href->{$varname} ), ", values=", pp( $href->{$varname} );
+
+#               warn q{ ... going through @k=}, mue->pp( \@k );
+
                printf "$field_fmt %s\n", $varname, join( " ", map { $str=$href->{$varname}->{$_}; sprintf "$field_fmt", middle_clip($str||"<>", 45) } @k );
             } 
 
