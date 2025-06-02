@@ -1,3 +1,15 @@
+---
+title: "META Information"
+date: 2024-12-03
+author: "muenalan"
+tags:
+  - configureplus
+  - bash
+  - configuration
+  - environment
+summary: "Overview of the current state of development and project planning for configureplus(1)"
+---
+
 # META
 
 ## Current Version

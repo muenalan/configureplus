@@ -2,6 +2,8 @@
 
 include .configureplus/currentsession.mk
 
+CONFIGURE_VERSION=$(CONFIGUREPLUS_VERSION)
+
 PRE=/usr/local
 
 DIR_TEMPLATE=$(CONFIGURE_PKGNAME)/$(PRE)
@@ -69,7 +71,7 @@ uninstall:
 	$(info ****** uninstall-systemwide: Not implemented yet *******)
 
 zip:
-	mkdir ../packages
+	mkdir -p ../packages
 	zip -r9 ../packages/$(CONFIGURE_PKGNAME)-$(CONFIGURE_VERSION)-$(CONFIGURE_OSTYPE).zip .
 
 archive-master:

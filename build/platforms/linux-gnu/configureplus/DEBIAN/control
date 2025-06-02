@@ -1,5 +1,5 @@
 Package: configureplus
-Version: 0.14.0
+Version: 0.16.2
 Maintainer: MUENALAN
 Architecture: all
 Description: minimal autoconf-like configure tool that depends only on bash
